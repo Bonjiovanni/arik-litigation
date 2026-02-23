@@ -21,10 +21,14 @@ import openpyxl
 from openpyxl.styles import Font, PatternFill, Alignment
 from openpyxl.utils import get_column_letter
 
+import httplib2
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
+from google_auth_httplib2 import AuthorizedHttp
+
+CA_CERT = "/etc/ssl/certs/ca-certificates.crt"
 
 # If modifying scopes, delete token.json
 SCOPES = ["https://www.googleapis.com/auth/drive.readonly"]
@@ -62,7 +66,8 @@ def authenticate():
         with open("token.json", "w") as token:
             token.write(creds.to_json())
 
-    return build("drive", "v3", credentials=creds)
+    http = AuthorizedHttp(creds, http=httplib2.Http(ca_certs=CA_CERT))
+    return build("drive", "v3", http=http)
 
 
 def find_folder(service, folder_name, parent_id="root"):
