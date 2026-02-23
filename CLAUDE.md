@@ -21,29 +21,22 @@ A Python script that authenticates to Google Drive via OAuth, finds a folder at 
 - Test user `arik.arik@gmail.com` added to OAuth consent screen ✓
 - credentials.json valid on server (verified 403 bytes, `installed` key confirmed) ✓
 - Google Drive API enabled in claude-sndroid project ✓
-- Script uses run_local_server for Termux use ✓
+- Script now uses manual URL/code flow (no browser auto-open) ✓
 - Repo cloned on phone at `~/downloads/Repo-for-Claude-android` ✓
-- Two credential JSON files downloaded to Termux `~/downloads/`:
-  - `client_secret_1076938672717-....json`
-  - `client_secret_696453844620-....json`
+- credentials.json copied from `client_secret_1076938672717-....json` ✓
 - token.json does NOT exist — auth not yet completed
 
 ## NEXT STEP — Run in Termux (on phone)
-1. Copy credentials and run:
+1. Pull latest script and run:
    ```bash
    cd ~/downloads/Repo-for-Claude-android
-   cp ~/downloads/client_secret_1076938672717-*.json credentials.json
-   pip install -r requirements.txt
+   git pull origin claude/google-drive-file-metadata-C554z
    python drive_file_metadata.py
    ```
-2. If that client secret fails, try the other one:
-   ```bash
-   cp ~/downloads/client_secret_696453844620-*.json credentials.json
-   python drive_file_metadata.py
-   ```
-3. Script opens browser on phone for Google login
-4. Sign in as arik.arik@gmail.com, click Allow
-5. Browser redirects to localhost:8080 — auth completes automatically
+2. Script prints a long URL — copy it
+3. Open URL in Android browser, sign in as arik.arik@gmail.com, click Allow
+4. Google shows a short auth code — copy it
+5. Switch back to Termux, paste the code and press Enter
 6. token.json saved, Excel file generated
 
 ## To Regenerate Credentials
