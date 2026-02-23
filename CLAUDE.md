@@ -18,10 +18,12 @@ A Python script that authenticates to Google Drive via OAuth, finds a folder at 
 - **Test user:** arik.arik@gmail.com (added to OAuth consent screen → Audience → Test users)
 
 ## Current Status (as of last session)
-- Test user `arik.arik@gmail.com` has been added to the OAuth consent screen
-- credentials.json exists on server but may need regenerating (client ID was shared in chat)
-- token.json does NOT exist yet — OAuth has not completed successfully yet
-- Getting Error 403: access_denied when trying to authenticate
+- Test user `arik.arik@gmail.com` added to OAuth consent screen ✓
+- credentials.json updated with new claude-sndroid project credentials ✓
+- token.json deleted — needs fresh auth
+- SSL cert issue fixed — httplib2 now uses /etc/ssl/certs/ca-certificates.crt ✓
+- Auth flow changed to manual copy-paste (no localhost redirect needed) ✓
+- NEXT STEP: Enable Google Drive API in claude-sndroid project, then re-run script and complete auth
 
 ## To Regenerate Credentials
 1. console.cloud.google.com → project gen-lang-client-0226922644
