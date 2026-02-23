@@ -54,7 +54,7 @@ def authenticate():
                     "(APIs & Services > Credentials > OAuth 2.0 Client IDs)."
                 )
             flow = InstalledAppFlow.from_client_secrets_file("credentials.json", SCOPES)
-            flow.redirect_uri = "http://localhost"
+            flow.redirect_uri = "http://localhost:8080"
             auth_url, _ = flow.authorization_url(prompt="consent")
 
             redirect_file = "redirect_url.txt"
