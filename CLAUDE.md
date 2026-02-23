@@ -21,19 +21,23 @@ A Python script that authenticates to Google Drive via OAuth, finds a folder at 
 - Test user `arik.arik@gmail.com` added to OAuth consent screen ✓
 - credentials.json updated with new claude-sndroid project credentials ✓
 - Google Drive API enabled in claude-sndroid project ✓
-- SSL cert issue fixed — httplib2 now uses /etc/ssl/certs/ca-certificates.crt ✓
-- Auth flow now uses redirect_url.txt file (no stdin/localhost needed) ✓
+- Script reverted to run_local_server for Termux use ✓
 - token.json does NOT exist — auth not yet completed
 
-## NEXT STEP WHEN USER RETURNS
-1. Run the script: `python drive_file_metadata.py`
-2. It will print a Google auth URL
-3. User opens URL in browser, signs in as arik.arik@gmail.com, clicks Allow
-4. Browser goes to a page that fails to load — that's expected
-5. User copies the full URL from the browser address bar and pastes it here
-6. Write that URL to /home/user/Repo-for-Claude-android/redirect_url.txt
-7. Run the script again — it will read redirect_url.txt and complete auth
-8. token.json will be saved and future runs need no auth
+## NEXT STEP — Run in Termux (on phone)
+1. In Termux:
+   ```
+   pkg install git
+   git clone https://github.com/Bonjiovanni/Repo-for-Claude-android
+   cd Repo-for-Claude-android
+   pip install -r requirements.txt
+   cat > credentials.json   # paste JSON, then Ctrl+D
+   python drive_file_metadata.py
+   ```
+2. Script opens browser on phone for Google login
+3. Sign in as arik.arik@gmail.com, click Allow
+4. Browser redirects to localhost:8080 — auth completes automatically
+5. token.json saved, Excel file generated
 
 ## To Regenerate Credentials
 1. console.cloud.google.com → project gen-lang-client-0226922644
