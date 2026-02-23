@@ -1,6 +1,6 @@
 credentials.json
 token.json
-file_metadata.json
+file_metadata_*.xlsx
 __pycache__/
 *.pyc
 .env

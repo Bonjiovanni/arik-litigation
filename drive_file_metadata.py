@@ -14,8 +14,12 @@ Setup:
 """
 
 import os
-import json
 from pathlib import Path
+from datetime import datetime
+
+import openpyxl
+from openpyxl.styles import Font, PatternFill, Alignment
+from openpyxl.utils import get_column_letter
 
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -124,6 +128,61 @@ def format_size(size_bytes):
     return f"{size_bytes:.1f} PB"
 
 
+def save_to_excel(results):
+    """Save file metadata to a formatted Excel workbook and return the filename."""
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "File Metadata"
+
+    # Header style
+    header_font = Font(bold=True, color="FFFFFF")
+    header_fill = PatternFill(fill_type="solid", fgColor="2E75B6")
+    header_align = Alignment(horizontal="center", vertical="center")
+
+    headers = ["#", "Filename", "Extension", "Size (Bytes)", "Size (Human)"]
+    for col, heading in enumerate(headers, start=1):
+        cell = ws.cell(row=1, column=col, value=heading)
+        cell.font = header_font
+        cell.fill = header_fill
+        cell.alignment = header_align
+
+    # Alternating row colours
+    fill_light = PatternFill(fill_type="solid", fgColor="DEEAF1")
+    fill_white = PatternFill(fill_type="solid", fgColor="FFFFFF")
+
+    for row_idx, r in enumerate(results, start=1):
+        row_fill = fill_light if row_idx % 2 == 0 else fill_white
+        values = [
+            row_idx,
+            r["filename"],
+            r["extension"],
+            r["size_bytes"],
+            r["size_human"],
+        ]
+        for col, value in enumerate(values, start=1):
+            cell = ws.cell(row=row_idx + 1, column=col, value=value)
+            cell.fill = row_fill
+
+    # Auto-fit column widths
+    for col in ws.columns:
+        max_length = max(
+            (len(str(cell.value)) for cell in col if cell.value is not None),
+            default=0,
+        )
+        ws.column_dimensions[get_column_letter(col[0].column)].width = min(max_length + 4, 80)
+
+    # Freeze the header row
+    ws.freeze_panes = "A2"
+
+    # Add an auto-filter
+    ws.auto_filter.ref = ws.dimensions
+
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    output_file = f"file_metadata_{timestamp}.xlsx"
+    wb.save(output_file)
+    return output_file
+
+
 def main():
     print("Authenticating with Google Drive...")
     service = authenticate()
@@ -178,10 +237,8 @@ def main():
     print(separator)
     print(f"Total: {len(results)} file(s)")
 
-    # Save to JSON
-    output_file = "file_metadata.json"
-    with open(output_file, "w", encoding="utf-8") as f:
-        json.dump(results, f, indent=2, ensure_ascii=False)
+    # Save to Excel
+    output_file = save_to_excel(results)
     print(f"\nResults saved to {output_file}")
 
 
