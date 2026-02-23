@@ -17,27 +17,34 @@ A Python script that authenticates to Google Drive via OAuth, finds a folder at 
 - **Scope:** `https://www.googleapis.com/auth/drive.readonly`
 - **Test user:** arik.arik@gmail.com (added to OAuth consent screen → Audience → Test users)
 
-## Current Status (as of last session)
+## Current Status (as of 2026-02-23)
 - Test user `arik.arik@gmail.com` added to OAuth consent screen ✓
-- credentials.json updated with new claude-sndroid project credentials ✓
+- credentials.json valid on server (verified 403 bytes, `installed` key confirmed) ✓
 - Google Drive API enabled in claude-sndroid project ✓
-- Script reverted to run_local_server for Termux use ✓
+- Script uses run_local_server for Termux use ✓
+- Repo cloned on phone at `~/downloads/Repo-for-Claude-android` ✓
+- Two credential JSON files downloaded to Termux `~/downloads/`:
+  - `client_secret_1076938672717-....json`
+  - `client_secret_696453844620-....json`
 - token.json does NOT exist — auth not yet completed
 
 ## NEXT STEP — Run in Termux (on phone)
-1. In Termux:
-   ```
-   pkg install git rust
-   git clone https://github.com/Bonjiovanni/Repo-for-Claude-android
-   cd Repo-for-Claude-android
+1. Copy credentials and run:
+   ```bash
+   cd ~/downloads/Repo-for-Claude-android
+   cp ~/downloads/client_secret_1076938672717-*.json credentials.json
    pip install -r requirements.txt
-   cat > credentials.json   # paste JSON, then Ctrl+D
    python drive_file_metadata.py
    ```
-2. Script opens browser on phone for Google login
-3. Sign in as arik.arik@gmail.com, click Allow
-4. Browser redirects to localhost:8080 — auth completes automatically
-5. token.json saved, Excel file generated
+2. If that client secret fails, try the other one:
+   ```bash
+   cp ~/downloads/client_secret_696453844620-*.json credentials.json
+   python drive_file_metadata.py
+   ```
+3. Script opens browser on phone for Google login
+4. Sign in as arik.arik@gmail.com, click Allow
+5. Browser redirects to localhost:8080 — auth completes automatically
+6. token.json saved, Excel file generated
 
 ## To Regenerate Credentials
 1. console.cloud.google.com → project gen-lang-client-0226922644
