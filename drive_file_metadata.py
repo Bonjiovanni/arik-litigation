@@ -50,7 +50,14 @@ def authenticate():
                     "(APIs & Services > Credentials > OAuth 2.0 Client IDs)."
                 )
             flow = InstalledAppFlow.from_client_secrets_file("credentials.json", SCOPES)
-            creds = flow.run_local_server(port=8080, open_browser=False)
+            auth_url, _ = flow.authorization_url(prompt="consent")
+            print("\nOpen this URL in your browser:")
+            print(auth_url)
+            print("\nAfter approving, Google will show a page that fails to load.")
+            print("Copy the full URL from your browser address bar and paste it here.")
+            redirect_response = input("\nPaste the redirect URL here: ")
+            flow.fetch_token(authorization_response=redirect_response)
+            creds = flow.credentials
 
         with open("token.json", "w") as token:
             token.write(creds.to_json())
