@@ -27,7 +27,7 @@ A Python script that authenticates to Google Drive via OAuth, finds a folder at 
 ## NEXT STEP — Run in Termux (on phone)
 1. In Termux:
    ```
-   pkg install git
+   pkg install git rust
    git clone https://github.com/Bonjiovanni/Repo-for-Claude-android
    cd Repo-for-Claude-android
    pip install -r requirements.txt
