@@ -11,7 +11,7 @@ A Python script that authenticates to Google Drive via OAuth, finds a folder at 
 - `.gitignore` — already excludes credentials.json and token.json
 
 ## Google Cloud Setup
-- **Project ID:** gen-lang-client-0226922644
+- **Project ID:** claude-sndroid (project name: Claude Android)
 - **App name:** Claudi android
 - **OAuth type:** Desktop app (installed)
 - **Scope:** `https://www.googleapis.com/auth/drive.readonly`
