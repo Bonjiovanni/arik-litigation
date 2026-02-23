@@ -21,14 +21,10 @@ import openpyxl
 from openpyxl.styles import Font, PatternFill, Alignment
 from openpyxl.utils import get_column_letter
 
-import httplib2
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
-from google_auth_httplib2 import AuthorizedHttp
-
-CA_CERT = "/etc/ssl/certs/ca-certificates.crt"
 
 # If modifying scopes, delete token.json
 SCOPES = ["https://www.googleapis.com/auth/drive.readonly"]
@@ -54,40 +50,12 @@ def authenticate():
                     "(APIs & Services > Credentials > OAuth 2.0 Client IDs)."
                 )
             flow = InstalledAppFlow.from_client_secrets_file("credentials.json", SCOPES)
-            flow.redirect_uri = "http://localhost:8080"
-
-            redirect_file = "redirect_url.txt"
-            state_file = "auth_state.txt"
-
-            if os.path.exists(redirect_file):
-                with open(redirect_file) as f:
-                    redirect_response = f.read().strip()
-                os.remove(redirect_file)
-                if os.path.exists(state_file):
-                    with open(state_file) as f:
-                        saved_state = f.read().strip()
-                    os.remove(state_file)
-                    flow.oauth2session._state = saved_state
-                print("Using redirect URL from redirect_url.txt")
-            else:
-                auth_url, state = flow.authorization_url(prompt="consent")
-                with open(state_file, "w") as f:
-                    f.write(state)
-                print("\nOpen this URL in your browser:")
-                print(auth_url)
-                print("\nAfter approving, copy the full URL from the address bar.")
-                print(f"Save it to: {os.path.abspath(redirect_file)}")
-                print("Then run the script again.")
-                raise SystemExit(0)
-
-            flow.fetch_token(authorization_response=redirect_response)
-            creds = flow.credentials
+            creds = flow.run_local_server(port=8080)
 
         with open("token.json", "w") as token:
             token.write(creds.to_json())
 
-    http = AuthorizedHttp(creds, http=httplib2.Http(ca_certs=CA_CERT))
-    return build("drive", "v3", http=http)
+    return build("drive", "v3", credentials=creds)
 
 
 def find_folder(service, folder_name, parent_id="root"):
