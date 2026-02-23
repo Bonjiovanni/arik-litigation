@@ -55,15 +55,24 @@ def authenticate():
                 )
             flow = InstalledAppFlow.from_client_secrets_file("credentials.json", SCOPES)
             flow.redirect_uri = "http://localhost:8080"
-            auth_url, _ = flow.authorization_url(prompt="consent")
 
             redirect_file = "redirect_url.txt"
+            state_file = "auth_state.txt"
+
             if os.path.exists(redirect_file):
                 with open(redirect_file) as f:
                     redirect_response = f.read().strip()
                 os.remove(redirect_file)
+                if os.path.exists(state_file):
+                    with open(state_file) as f:
+                        saved_state = f.read().strip()
+                    os.remove(state_file)
+                    flow.oauth2session._state = saved_state
                 print("Using redirect URL from redirect_url.txt")
             else:
+                auth_url, state = flow.authorization_url(prompt="consent")
+                with open(state_file, "w") as f:
+                    f.write(state)
                 print("\nOpen this URL in your browser:")
                 print(auth_url)
                 print("\nAfter approving, copy the full URL from the address bar.")
