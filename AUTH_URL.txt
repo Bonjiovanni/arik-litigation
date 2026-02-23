@@ -1,0 +1,7 @@
+Open this URL in your browser to authorise Google Drive access.
+Sign in as: arik.arik@gmail.com
+
+https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=696453844620-00b806oini31cl3a3tb0cl8u9b67cmbe.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2F&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive.readonly&state=Opteo43RzxWWlB0vi6SePw215ChxE7&access_type=offline
+
+After clicking Allow, the browser will go to localhost:8080 and may show an error - that's OK.
+Come back to Claude and type: "auth done" and I'll check if it worked.
