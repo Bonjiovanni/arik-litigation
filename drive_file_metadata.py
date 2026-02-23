@@ -49,8 +49,17 @@ def authenticate():
                     "credentials.json not found. Download it from Google Cloud Console "
                     "(APIs & Services > Credentials > OAuth 2.0 Client IDs)."
                 )
-            flow = InstalledAppFlow.from_client_secrets_file("credentials.json", SCOPES)
-            creds = flow.run_console()
+            flow = InstalledAppFlow.from_client_secrets_file(
+                "credentials.json", SCOPES,
+                redirect_uri="urn:ietf:wg:oauth:2.0:oob"
+            )
+            auth_url, _ = flow.authorization_url(prompt="consent")
+            print("\nOpen this URL in your browser:\n")
+            print(auth_url)
+            print()
+            code = input("Paste the authorization code here: ").strip()
+            flow.fetch_token(code=code)
+            creds = flow.credentials
 
         with open("token.json", "w") as token:
             token.write(creds.to_json())
