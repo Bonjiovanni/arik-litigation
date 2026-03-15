@@ -59,3 +59,36 @@ Script will print a Google auth URL — open it in browser, sign in as arik.arik
 - App gets killed when switching to browser/Google Console
 - Chat history is lost when app is killed
 - User accesses this Linux server via Claude Code Android app
+
+---
+
+## fileWalker — File Walker + Triage System (Active Project)
+
+**Branch:** `claude/upload-file-form-sipNu`
+
+A Python-based file walker + first-pass triage system for litigation evidence surfacing. Scans user-selected Windows directories (OneDrive), inventories files with metadata, and outputs to a multi-tab Excel workbook.
+
+### Key Files
+- `fileWalker.md` — Full specification/design document (from user's email)
+- `generate_dir_format_sample.py` — Generates sample Excel comparing directory inventory formats
+- `dir_format_sample.xlsx` — Sample workbook with Option A (FullPath) vs Option C (Hybrid) formats + Dir_Processing_Status sheet
+
+### Implementation Plan
+Saved at: `/root/.claude/plans/giggly-wiggling-castle.md`
+
+**Architecture:** Separate focused Python scripts (agents), each does one thing, all operate on the same master workbook (`filewalker_master.xlsx`).
+
+**Build phases:**
+- **Phase 0 (current):** Directory Mapper (`fw_dirmap.py`) — map folder structure, Dir_Inventory sheet. User needs to review `dir_format_sample.xlsx` and choose Option A vs Option C format before building.
+- **Phase 1:** File Walker foundation — config, workbook creation, basic file walking
+- **Phase 2:** Core enrichment — hashing, file family classification, Likely* flags, skip logic
+- **Phase 3:** Walk management — history, coverage, overlap detection
+- **Phase 4:** Triage layer — entity/keyword matching, scoring, summaries
+
+**Code will live in:** `filewalker/` subdirectory (config.py, workbook.py, walker.py, classify.py, triage.py, main.py)
+
+### Build Rules
+1. Do NOT build anything without explicit user approval — ask before each piece
+2. Do NOT build everything at once — build in phases, discuss between phases
+3. Production Excel files must use Excel MCP tools in VS Code, not openpyxl
+4. All code committed to git so it persists across sessions
