@@ -92,3 +92,47 @@ Saved at: `/root/.claude/plans/giggly-wiggling-castle.md`
 2. Do NOT build everything at once — build in phases, discuss between phases
 3. Production Excel files must use Excel MCP tools in VS Code, not openpyxl
 4. All code committed to git so it persists across sessions
+
+---
+
+## Testing Suite
+
+**Run all tests:**
+```bash
+C:\Users\arika\AppData\Local\Programs\Python\Python311\python.exe -m pytest tests/ -v
+```
+
+**Rules — mandatory for every session:**
+1. Every module gets a corresponding `tests/test_<module>.py`. Maintain all test files when the module changes.
+2. **Run the full suite before AND after any code change.** Confirm all tests pass before moving on.
+3. If a previously passing test breaks, fix the regression immediately — do not proceed with new work while tests are red.
+4. When adding a new function, add its tests in the same session before closing out.
+5. After merging group files into a single-file module (e.g. `fw_dirmap.py`), add module-level integration tests for the merged file.
+
+### Pending test work
+
+| Module | Status | Action needed |
+|---|---|---|
+| `fw_walk_grp1-5.py` | Being built in "upload file form" chat | Once merged into `fw_walk.py`: write per-group tests + module-level `tests/test_fw_walk.py` (same pattern as fw_dirmap) |
+
+### Test files
+
+| File | Module tested | Scope |
+|---|---|---|
+| `tests/test_fw_dirmap_grp1.py` | `fw_dirmap_grp1.py` | `validate_and_normalize_path`, `generate_run_id` |
+| `tests/test_fw_dirmap_grp2.py` | `fw_dirmap_grp2.py` | `detect_source_store`, `count_dir_contents`, `walk_directories` |
+| `tests/test_fw_dirmap_grp3.py` | `fw_dirmap_grp3.py` | `build_dir_records` (DI-based, no real filesystem) |
+| `tests/test_fw_dirmap_grp4.py` | `fw_dirmap_grp4.py` | `open_or_create_workbook`, `ensure_dir_inventory_sheet`, `write_dir_inventory_rows` |
+| `tests/test_fw_dirmap_grp5.py` | `fw_dirmap_grp5.py` | `ensure_dir_processing_status_sheet`, `initialize_processing_status_rows` |
+| `tests/test_fw_dirmap_grp6.py` | `fw_dirmap_grp6.py` | `log_dirmap_run`, `print_run_summary` |
+| `tests/test_fw_dirmap.py` | `fw_dirmap.py` | **Module-level integration** — namespace, full pipeline, cross-group data contracts, round-trip save/reload, multi-root, sheet structure |
+
+### What `test_fw_dirmap.py` covers (module-level only)
+- All 13 public functions importable from the merged single-file module
+- Full pipeline: `build_dir_records` → `write_dir_inventory_rows` → `initialize_processing_status_rows` → `log_dirmap_run` → all 3 sheets exist with correct row counts
+- DirID consistency between Dir_Inventory and Dir_Processing_Status
+- 9 distinct file families per directory in DPS
+- Save → reload round-trip integrity
+- `open_or_create_workbook` for new and existing files
+- Continuous DirIDs across multiple roots
+- Freeze panes, header rows, idempotent `ensure_*` calls
