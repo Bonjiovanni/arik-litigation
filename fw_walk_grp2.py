@@ -56,6 +56,8 @@ COLUMNS = [
     ("LikelyDocument",       10),
     ("LikelyScreenshot",     10),
     ("NeedsOCR",             10),
+    ("HasFormFields",        10),
+    ("ExtractionMethod",     20),
     ("IsContainerType",      10),
     ("SkipReason",           14),
     ("ArchiveContents",      45),   # plain-text summary for zip/rar/7z contents
@@ -72,6 +74,7 @@ COLUMNS = [
     ("TextSample",           20),
     ("OCRSnippet",           20),
     ("KeywordHits",          20),
+    ("EntityHits",           40),
     ("MoneyDetected",        20),
     ("DateDetected",         20),
     ("SignatureLike",        20),

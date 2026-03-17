@@ -1,0 +1,33 @@
+name: Notify Testing Guru
+
+"on":
+  push:
+    branches: ["**"]
+    paths:
+      - "_testing_needed.md"
+
+jobs:
+  open-issue:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create label if missing
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh label create testing-needed \
+            --color "e11d48" \
+            --description "New code landed — Testing Guru action needed" \
+            || true
+
+      - name: Open issue from _testing_needed.md
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue create \
+            --title "Testing needed: new code landed ($(date -u '+%Y-%m-%d %H:%M UTC'))" \
+            --body-file _testing_needed.md \
+            --label "testing-needed"

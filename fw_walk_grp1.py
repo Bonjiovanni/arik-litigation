@@ -55,32 +55,37 @@ _SYSTEM_EXTENSIONS: set[str] = {
 # FUNCTION 1: load_file_family_config
 # ---------------------------------------------------------------------------
 
-def load_file_family_config(ws) -> "tuple[dict[str, set[str]], set[str]]":
-    """Load the file-family extension map and skip-family set from a worksheet.
+def load_file_family_config(ws) -> "tuple[dict[str, set[str]], set[str], dict[str, dict[str, str]]]":
+    """Load the file-family extension map, skip-family set, and likely-flags from a worksheet.
 
     Reads the FileFamily_Config worksheet (openpyxl Worksheet object).
     Expected columns (row 1 = header):
         A: Family          — family name string (e.g. "pdf")
         B: Extensions      — semicolon-separated list (e.g. ".pdf" or ".doc;.docx")
         C: ShouldSkip      — "Y" or "N"
-
-    Rows with an empty Family cell are ignored.
-    Parsing is case-insensitive for ShouldSkip; extension tokens are lowercased
-    and leading dots are ensured.
-
-    Falls back gracefully: any row with a missing/invalid Extensions value is
-    loaded with an empty extension set (family still registered).
-
-    Args:
-        ws: An openpyxl Worksheet for the FileFamily_Config sheet.
+        D: LikelyTextBearing — "Y" or "N"
+        E: LikelyImage       — "Y" or "N"
+        F: LikelySpreadsheet — "Y" or "N"
+        G: LikelyDocument    — "Y" or "N"
+        H: LikelyScreenshot  — "Y" or "N"  [optional]
 
     Returns:
-        (family_map, skip_families)
+        (family_map, skip_families, likely_flags)
             family_map    — {family_name: {".ext", ...}}
             skip_families — set of family names where ShouldSkip == "Y"
+            likely_flags  — {family_name: {"likely_text_bearing": "Y"/"N", ...}}
     """
     family_map: dict[str, set[str]] = {}
     skip_families: set[str] = set()
+    likely_flags: dict[str, dict[str, str]] = {}
+
+    _flag_cols = [
+        (3, "likely_text_bearing"),
+        (4, "likely_image"),
+        (5, "likely_spreadsheet"),
+        (6, "likely_document"),
+        (7, "likely_screenshot"),
+    ]
 
     for row in ws.iter_rows(min_row=2, values_only=True):
         if not row or row[0] is None:
@@ -107,7 +112,14 @@ def load_file_family_config(ws) -> "tuple[dict[str, set[str]], set[str]]":
         if should_skip_val == "Y":
             skip_families.add(family)
 
-    return family_map, skip_families
+        # Likely-flags columns (D-H)
+        flags: dict[str, str] = {}
+        for col_idx, key in _flag_cols:
+            val = row[col_idx] if len(row) > col_idx else None
+            flags[key] = str(val).strip().upper() if val is not None else "N"
+        likely_flags[family] = flags
+
+    return family_map, skip_families, likely_flags
 
 
 # ---------------------------------------------------------------------------

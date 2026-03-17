@@ -63,35 +63,35 @@ class TestLoadFileFamilyConfig:
 
     def test_empty_worksheet_returns_empty(self):
         ws = _make_mock_ws(self.HEADER, [])
-        fm, sf = grp1.load_file_family_config(ws)
+        fm, sf, _ = grp1.load_file_family_config(ws)
         assert fm == {}
         assert sf == set()
 
     def test_single_family_appears_in_map(self):
         ws = _make_mock_ws(self.HEADER, [("pdf", ".pdf", "N", "Y", "N", "N", "Y", "")])
-        fm, _ = grp1.load_file_family_config(ws)
+        fm, _, _ = grp1.load_file_family_config(ws)
         assert "pdf" in fm
         assert ".pdf" in fm["pdf"]
 
     def test_should_skip_Y_adds_to_skip_families(self):
         ws = _make_mock_ws(self.HEADER, [("archive", ".zip", "Y", "N", "N", "N", "N", "")])
-        _, sf = grp1.load_file_family_config(ws)
+        _, sf, _ = grp1.load_file_family_config(ws)
         assert "archive" in sf
 
     def test_should_skip_N_does_not_add(self):
         ws = _make_mock_ws(self.HEADER, [("pdf", ".pdf", "N", "Y", "N", "N", "Y", "")])
-        _, sf = grp1.load_file_family_config(ws)
+        _, sf, _ = grp1.load_file_family_config(ws)
         assert "pdf" not in sf
 
     def test_extension_without_leading_dot_gets_dot_added(self):
         ws = _make_mock_ws(self.HEADER, [("pdf", "pdf", "N", "Y", "N", "N", "Y", "")])
-        fm, _ = grp1.load_file_family_config(ws)
+        fm, _, _ = grp1.load_file_family_config(ws)
         assert "pdf" in fm
         assert ".pdf" in fm["pdf"]
 
     def test_semicolon_delimited_extensions_are_split(self):
         ws = _make_mock_ws(self.HEADER, [("image", ".jpg;.png;.gif", "N", "N", "Y", "N", "N", "")])
-        fm, _ = grp1.load_file_family_config(ws)
+        fm, _, _ = grp1.load_file_family_config(ws)
         assert "image" in fm
         assert ".jpg" in fm["image"]
         assert ".png" in fm["image"]
@@ -102,14 +102,14 @@ class TestLoadFileFamilyConfig:
             (None, ".xyz", "N", "N", "N", "N", "N", ""),
             ("pdf", ".pdf", "N", "Y", "N", "N", "Y", ""),
         ])
-        fm, _ = grp1.load_file_family_config(ws)
+        fm, _, _ = grp1.load_file_family_config(ws)
         # None-family row should not produce an "xyz" family or similar
         assert ".xyz" not in {ext for exts in fm.values() for ext in exts}
         assert "pdf" in fm
 
     def test_none_should_skip_defaults_to_not_skip(self):
         ws = _make_mock_ws(self.HEADER, [("weirdtype", ".weird", None, "N", "N", "N", "N", "")])
-        _, sf = grp1.load_file_family_config(ws)
+        _, sf, _ = grp1.load_file_family_config(ws)
         assert "weirdtype" not in sf
 
     def test_multiple_families(self):
@@ -118,7 +118,7 @@ class TestLoadFileFamilyConfig:
             ("video",   ".mp4", "Y", "N", "Y", "N", "N", ""),
             ("pdf",     ".pdf", "N", "Y", "N", "N", "Y", ""),
         ])
-        fm, sf = grp1.load_file_family_config(ws)
+        fm, sf, _ = grp1.load_file_family_config(ws)
         assert "archive" in sf
         assert "video" in sf
         assert "pdf" not in sf
@@ -459,11 +459,12 @@ class TestEnsureMasterFileInventorySheet:
         ws2 = grp2.ensure_master_file_inventory_sheet(wb)
         assert ws1.title == ws2.title
 
-    def test_61_headers(self):
+    def test_header_count_matches_columns(self):
+        from fw_walk_grp2 import COLUMNS
         wb = openpyxl.Workbook()
         ws = grp2.ensure_master_file_inventory_sheet(wb)
         row1 = [c.value for c in ws[1] if c.value is not None]
-        assert len(row1) == 61
+        assert len(row1) == len(COLUMNS)
 
     def test_spot_check_headers(self):
         wb = openpyxl.Workbook()

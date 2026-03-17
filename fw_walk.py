@@ -87,20 +87,31 @@ _SYSTEM_EXTENSIONS: set[str] = {
 }
 
 
-def load_file_family_config(ws) -> "tuple[dict[str, set[str]], set[str]]":
-    """Load the file-family extension map and skip-family set from a worksheet.
+def load_file_family_config(ws) -> "tuple[dict[str, set[str]], set[str], dict[str, dict[str, str]]]":
+    """Load the file-family extension map, skip-family set, and likely-flags from a worksheet.
 
     Reads the FileFamily_Config worksheet. Expected columns (row 1 = header):
-        A: Family, B: Extensions (semicolon-separated), C: ShouldSkip (Y/N)
-
-    Args:
-        ws: openpyxl Worksheet for FileFamily_Config.
+        A: Family, B: Extensions (semicolon-separated), C: ShouldSkip (Y/N),
+        D: LikelyTextBearing (Y/N), E: LikelyImage (Y/N),
+        F: LikelySpreadsheet (Y/N), G: LikelyDocument (Y/N),
+        H: LikelyScreenshot (Y/N)  [optional]
 
     Returns:
-        (family_map, skip_families) where family_map = {family: {extensions}}
+        (family_map, skip_families, likely_flags)
+        likely_flags = {family: {"likely_text_bearing": "Y"/"N", ...}}
     """
     family_map: dict[str, set[str]] = {}
     skip_families: set[str] = set()
+    likely_flags: dict[str, dict[str, str]] = {}
+
+    # Map header names to record keys (order matches sheet columns D-H)
+    _flag_cols = [
+        (3, "likely_text_bearing"),
+        (4, "likely_image"),
+        (5, "likely_spreadsheet"),
+        (6, "likely_document"),
+        (7, "likely_screenshot"),
+    ]
 
     for row in ws.iter_rows(min_row=2, values_only=True):
         if not row or row[0] is None:
@@ -124,7 +135,13 @@ def load_file_family_config(ws) -> "tuple[dict[str, set[str]], set[str]]":
         if should_skip_val == "Y":
             skip_families.add(family)
 
-    return family_map, skip_families
+        flags: dict[str, str] = {}
+        for col_idx, key in _flag_cols:
+            val = row[col_idx] if len(row) > col_idx else None
+            flags[key] = str(val).strip().upper() if val is not None else "N"
+        likely_flags[family] = flags
+
+    return family_map, skip_families, likely_flags
 
 
 def classify_file_family(
@@ -334,6 +351,8 @@ COLUMNS = [
     ("LikelyDocument",       10),
     ("LikelyScreenshot",     10),
     ("NeedsOCR",             10),
+    ("HasFormFields",        10),
+    ("ExtractionMethod",     20),
     ("IsContainerType",      10),
     ("SkipReason",           14),
     ("ArchiveContents",      45),
@@ -350,6 +369,7 @@ COLUMNS = [
     ("TextSample",           20),
     ("OCRSnippet",           20),
     ("KeywordHits",          20),
+    ("EntityHits",           40),
     ("MoneyDetected",        20),
     ("DateDetected",         20),
     ("SignatureLike",        20),
@@ -694,6 +714,7 @@ def walk_files(
     processing_level: str,
     wb: Workbook,
     overlap_action: str = "skip",
+    include_subdirectories: bool = True,
 ) -> dict:
     """Walk directories and write every file to Master_File_Inventory.
 
@@ -703,7 +724,7 @@ def walk_files(
     do_hash = _level_index(processing_level) >= _level_index("hashed")
 
     fc_ws = ensure_file_family_config_sheet(wb)
-    family_map, skip_families = load_file_family_config(fc_ws)
+    family_map, skip_families, likely_flags = load_file_family_config(fc_ws)
 
     stats: dict = {
         "inserted": 0, "updated": 0,
@@ -734,7 +755,7 @@ def walk_files(
                     stats["skipped_dirs"] += 1
                     print(f"[fw_walk] WARNING: permission denied, skipping: {subpath}",
                           file=sys.stderr)
-            dirnames[:] = accessible
+            dirnames[:] = [] if not include_subdirectories else accessible
 
             for filename in filenames:
                 filepath = os.path.join(dirpath, filename).replace("\\", "/")
@@ -769,11 +790,11 @@ def walk_files(
                         "duplicate_group_id": "",
                         "file_family":        file_family,
                         "source_type":        "standalone_file",
-                        "likely_text_bearing": "",
-                        "likely_image":       "",
-                        "likely_spreadsheet": "",
-                        "likely_document":    "",
-                        "likely_screenshot":  "",
+                        "likely_text_bearing": likely_flags.get(file_family, {}).get("likely_text_bearing", ""),
+                        "likely_image":        likely_flags.get(file_family, {}).get("likely_image", ""),
+                        "likely_spreadsheet":  likely_flags.get(file_family, {}).get("likely_spreadsheet", ""),
+                        "likely_document":     likely_flags.get(file_family, {}).get("likely_document", ""),
+                        "likely_screenshot":   likely_flags.get(file_family, {}).get("likely_screenshot", ""),
                         "needs_ocr":          "",
                         "is_container_type":  "Y" if file_family == "archive" else "",
                         "skip_reason":        skip_reason,
@@ -1024,6 +1045,14 @@ def main() -> None:
         for d in valid_dirs:
             print(f"  {d}")
 
+        # 6b. Include subdirectories?
+        raw_subdir = input("\nInclude subdirectories? [Y/n]: ").strip().lower()
+        include_subdirectories = raw_subdir != "n"
+        if include_subdirectories:
+            print("[fw_walk] Subdirectories: YES — will scan all nested folders.")
+        else:
+            print("[fw_walk] Subdirectories: NO — top-level files only.")
+
         # 7. Overlap detection
         overlap_action: str = "proceed"
         if "Dir_Processing_Status" in wb.sheetnames:
@@ -1056,6 +1085,7 @@ def main() -> None:
             processing_level=processing_level,
             wb=wb,
             overlap_action=overlap_action,
+            include_subdirectories=include_subdirectories,
         )
 
         inserted      = stats.get("inserted", 0)
