@@ -144,3 +144,137 @@ C:\Users\arika\AppData\Local\Programs\Python\Python311\python.exe -m pytest test
 - `log_walk_run`: RunID written, pipe-separated ScanDirs, second run appends
 - Freeze panes and idempotency for all 4 sheets
 - Save → reload preserving all 4 sheets and MFI data rows
+
+---
+
+## Email Evidence Pipeline
+
+A second major pipeline alongside fileWalker, operating on litigation email evidence.
+Both pipelines converge at the Chroma indexing layer (planned) and via the sha256 join key.
+
+### Email Body Pipeline Chain
+
+```
+Gmail body master.json  --+
+EML body master.json      +--> merge_and_classify.py --> combined_repository.json
+MSG body master.json    --+        (uses strippers.py)      + <name>_report.json
+                                                                   |
+                                                                   v
+                                                        export_all_emails.py
+                                                                   |
+                                                                   v
+                                                    all_emails (N).xlsx [current: (2)]
+                                                                   |
+                                                                   v
+                                     AllEmailBod PQ (via Email_Body_Input_File param)
+                                                                   |
+                                                                   v
+                                                AllEmailBod_1 table in V11.xlsx
+```
+
+Aid4Mail JSON sources: `C:\Users\arika\OneDrive\Litigation\Aid4Mail Exports\Aid4 ti json 2dtime\`
+All scripts: `C:\Users\arika\Repo-for-Claude-android\email_pipeline\`
+Intermediate outputs: `C:\Users\arika\OneDrive\Litigation\Pipeline\` (not in git)
+
+### Email Pipeline Scripts (in repo: email_pipeline/)
+
+**merge_and_classify.py**
+- Interactive file pickers for Gmail/EML/MSG inputs — asks Y/N per source
+- Deduplicates on SHA256 (primary) then Message-ID (fallback)
+- EML/MSG wins over Gmail API as forensically authoritative
+- Classifies strip_method, writes body_clean via strippers.py
+- Outputs: `<name>.json` + `<name>_report.json`
+- Config memory: `Email_Body_Processing_Config.json` (not committed)
+- Offers to chain directly into export_all_emails.py at end of run
+
+**strippers.py**
+- Quote-stripping library — 10 strip methods (Gmail, Outlook, Forward, GT_Prefix,
+  Outlook_Plain, iOS, OnWrote, Original, Inline, Clean_Reply)
+- Post-processing: attorney signature removal (Gravel & Shea, Primmer Piper)
+- Called by merge_and_classify.py via get_body_clean()
+
+**export_all_emails.py**
+- Interactive file picker for input JSON and output xlsx
+- Exports all fields, all records via xlsxwriter/write_string (no formula corruption)
+- Priority cols first; rest alphabetical. Overwrite protection.
+
+**validate_attachments.py**
+- Validates attachment manifest (Excel index) against physical Attachment/ and Embedded/ folders
+- Checks: missing files, orphans, count mismatches, duplicate basenames, name collisions
+- Outputs: validation_report.xlsx (multi-tab)
+
+**read_xlsx.py**
+- General utility: dumps any .xlsx to JSON on stdout
+- Used by claude.ai Desktop Commander and pipeline scripts
+- Usage: `python read_xlsx.py <path.xlsx> [sheet_name]`
+
+### JH LTC Document Extraction Scripts (09-Data Schemas — not yet in repo)
+
+**visualize_eob_fields.py** + **batch_eob_process.py**
+- EOB PDF field extraction via pymupdf; HTML review page per doc + Excel summary + merged PDF
+
+**visualize_invoice_fields.py** + **batch_invoice_process.py**
+- JH Invoice PDF field extraction (page 1 digital only; pages 2+ are scanned timesheets)
+
+**extract_one_detail_page.py**
+- Probe script: Claude Vision extraction of one scanned invoice detail page
+
+All five live at: `C:\Users\arika\OneDrive\Litigation\09-Data Schemas\`
+
+### Data Sources
+
+**Aid4Mail body exports** (JSON, 3 files)
+- Gmail: `...\Aid4 ti json 2dtime\Gmail body master.json`
+- EML:   `...\Aid4 ti json 2dtime\EML body master.json`
+- MSG:   `...\Aid4 ti json 2dtime\MSG body master.json`
+- Merged output: `C:\Users\arika\OneDrive\Litigation\Pipeline\combined_repository.json`
+- Excel output:  `C:\Users\arika\OneDrive\Litigation\Pipeline\all_emails (2).xlsx` [current]
+- 1,672 rows. Key fields: Body.Text, Body.SenderText, body_clean, strip_method
+- CloudHQ "Email Text" field is superseded by this pipeline
+
+**CloudHQ live Google Sheet**
+- 1,695 rows as of 2026-03-18. Query name in V11.xlsx: CloudHQ_Live
+- PQ CSV URL published via File > Share > Publish to web > CSV
+- Columns include: Thread ID, RFC 822 Message ID, From, To, Subject, Labels,
+  Date & Time Sent/Received, Attachments Count, Body Snippet
+
+**Aid4Mail Attachment Manifest**
+- File: `...\Aid4 to json with python attachments\Attachment_Manifest_GML_EML_MSG (1).xlsx`
+- One row per attachment. Key columns: mih, message_id, attachment_ordinal,
+  original_filename, saved_filename, file_type, saved_full_path, storage_folder, size_bytes, sha256
+- Physical files: `...\Attachment\` and `...\Embedded\`
+
+### Primary Working Workbook
+`C:\Users\arika\OneDrive\Litigation\Pipeline\label_LegalEmailExtracts - Ariks Version V11.xlsx`
+(Renamed from V10 on 2026-03-18)
+
+PQ queries: WorkingCopyTable, AllEmailBod (parameterized via Email_Body_Input_File),
+CloudHQ_Live (live CSV), ThreeWayAudit, Merge1, Guns
+
+**PQ Parameter: Email_Body_Input_File**
+- Current value: `C:\Users\arika\OneDrive\Litigation\Pipeline\all_emails (2).xlsx`
+- Update this after each new Aid4Mail run. NEVER overwrite prior all_emails files.
+
+### Universal Join Key
+- CloudHQ: `RFC 822 Message ID`
+- AllEmailBod / merge output: `Header.Message-ID`
+- Attachment Manifest: `message_id`
+
+### Three-Way Audit (ThreeWayAudit query — BUILT)
+Compares Message IDs across AllEmailBod, WorkingCopyTable, CloudHQ_Live.
+Results 2026-03-18: 1,695 unique, 1,550 OK, 81 CloudHQ-only (delta list for next Aid4Mail run),
+64 EML-only (expected). Uses full outer join (type 2) — NOT JoinKind.Left.
+
+### Planned: EmailMaster.xlsx (DESIGNED, NOT YET BUILT)
+- Tab 1 EmailMaster: one row per email, cols from WorkingCopyTable + AllEmailBod joined
+- Tab 2 AttachmentDetail: all attachment manifest rows linked via message_id
+
+### Convergence with fileWalker
+- sha256 in Attachment Manifest = SHA256 in fileWalker Master_File_Inventory
+- OCR output from fw_ocr will link back via sha256
+
+### Downstream: Chroma / RAG (PLANNED, NOT YET BUILT)
+- Primary chunk: Body.SenderText; Secondary: Body.Text
+- Metadata: RFC 822 Message ID, Header.From, Header.Date, Header.Subject,
+  Header.X-Gmail-Labels, Email.HashSHA256
+- Hybrid RAG (BM25 + dense vector)
