@@ -96,7 +96,60 @@ Delete this file and commit.
 
 ---
 
-## NEW — 2026-03-18 — email_pipeline/ scripts added to repo
+## NEW — 2026-03-18 — email_pipeline/validate_attachments.py added to repo
+
+**Script:** `email_pipeline/validate_attachments.py`
+Validates Aid4Mail attachment exports against JSON metadata and normalized Excel index.
+
+### Tests needed — write from scratch
+
+- `TestNormalizeName` — case-insensitive on Windows (os.name == 'nt'), case-sensitive otherwise
+- `TestHashFile` — SHA-256 of a known temp file matches expected value
+- `TestLoadJson` — list input returns as-is; dict with 'emails' key returns inner list;
+  dict with other known keys (messages, records, data); dict with unknown keys returns first list value; fallback returns [dict]
+- `TestScanFolder` — existing folder returns correct basename→path mapping; non-existent folder returns empty dict and prints warning; recursive scan finds nested files
+- `TestWriteDfToSheet` — empty DataFrame writes "No issues found."; non-empty writes header + rows + applies header styling; column widths set
+- Integration (with temp files): given a minimal Excel index and matching/mismatching disk files, verify Summary sheet counts are correct for missing, orphans, and count mismatches
+
+---
+
+## NEW — 2026-03-18 — jh_ltc/ scripts added to repo
+
+Five John Hancock LTC document extraction scripts in `jh_ltc/`:
+
+- `visualize_eob_fields.py` — EOB PDF field visualizer, produces annotated HTML review page
+- `batch_eob_process.py` — batch EOB processor → per-file JSON + EOB_summary.xlsx + merged PDF
+- `visualize_invoice_fields.py` — JH Invoice field visualizer (page 1 digital only)
+- `batch_invoice_process.py` — batch invoice processor → per-file JSON + Invoice_summary.xlsx + merged PDF
+- `extract_one_detail_page.py` — Claude Vision probe for one scanned invoice detail page
+
+### Tests needed
+
+These scripts use pymupdf (fitz), openpyxl, and anthropic. Focus on unit-testable
+pure functions; skip functions requiring real PDFs or API calls (mark as integration tests).
+
+**visualize_eob_fields.py / visualize_invoice_fields.py:**
+- Test `extract_field_values()` with mocked fitz page text — verify field parsing logic
+- Test `FIELD_ORDER` list is non-empty and contains expected key fields
+
+**batch_eob_process.py / batch_invoice_process.py:**
+- Test filename → date sorting logic (chronological order)
+- Test output path construction (stem naming, directory resolution)
+- Mock file discovery: given a list of PDF paths, verify correct sort order
+
+**extract_one_detail_page.py:**
+- Mark as integration test (requires real PDF + API key) — skip in CI
+- Verify config constants (INVOICE_DIR, OUT_DIR, KEY_FILE) are Path objects
+
+---
+
+## NEW — 2026-03-18 — email_pipeline/ scripts — DONE ✓
+
+106 tests written and passing. Suite: 746 tests across 20 files.
+
+---
+
+## ARCHIVED — 2026-03-18 — email_pipeline/ scripts added to repo
 
 Four scripts moved from `C:\Users\arika\OneDrive\Litigation\Pipeline\` into `email_pipeline/`:
 
