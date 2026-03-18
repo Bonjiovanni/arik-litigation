@@ -97,6 +97,14 @@ Saved at: `/root/.claude/plans/giggly-wiggling-castle.md`
 
 ## Testing Suite
 
+### File Discovery Rule (IMPORTANT)
+When checking for new scripts to test, always verify by reading the file system directly
+(use Glob or ls on the actual paths). Do NOT rely on git status or assume files must be
+pushed to remote. All work happens locally on branch `claude/upload-file-form-sipNu`.
+If _testing_needed.md references a file, check the path on disk before concluding it doesn't exist.
+
+
+
 **Run all tests:**
 ```bash
 C:\Users\arika\AppData\Local\Programs\Python\Python311\python.exe -m pytest tests/ -v
