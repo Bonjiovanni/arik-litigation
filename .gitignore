@@ -4,3 +4,8 @@ file_metadata_*.xlsx
 __pycache__/
 *.pyc
 .env
+
+# email_pipeline runtime artifacts — never commit these
+email_pipeline/Email_Body_Processing_Config.json
+email_pipeline/*.xlsx
+email_pipeline/*.json

@@ -126,6 +126,17 @@ Configs seed with reasonable defaults but must be tuned for this specific case.
 
 ---
 
+## Related pipelines
+
+### Email Body Processing Pipeline
+A separate pipeline for processing Aid4Mail email exports lives in `email_pipeline/`.
+It is independent of the fileWalker pipeline — it operates on email body content,
+not on the file system inventory.
+
+See `docs/email_pipeline.md` for full documentation.
+
+---
+
 ## History / audit sheets
 
 | Sheet | Written by | One row per |
