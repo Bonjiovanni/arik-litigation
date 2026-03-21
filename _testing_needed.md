@@ -96,6 +96,20 @@ Delete this file and commit.
 
 ---
 
+## NEW — 2026-03-21 — Drive Scout + fw_dir_tree + fw_file_inventory — DONE ✓
+
+90 tests written and passing across 3 files:
+- `tests/test_fw_dir_tree.py` (30 tests)
+- `tests/test_fw_file_inventory.py` (26 tests)
+- `tests/test_drive_scout_server.py` (34 tests)
+
+Note: asyncio.create_task patched with `side_effect=lambda coro: coro.close()`
+to prevent real PowerShell scans. WebSocket tests skipped (integration-level).
+conftest.py updated to add repo root to sys.path (fixes Pylance import resolution).
+Suite: **928 tests passing** across 26 files.
+
+---
+
 ## NEW — 2026-03-18 — email_pipeline/validate_attachments.py — DONE ✓
 
 22 tests written and passing. `tests/test_validate_attachments.py`.
