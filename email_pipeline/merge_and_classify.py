@@ -47,7 +47,7 @@ def save_config(cfg: dict):
 def pick_input_file(label: str, last_dir: str) -> Path | None:
     """Ask Y/N, then open a file picker if yes. Returns Path or None."""
     answer = input(f"\nDo you have a {label} export to include? [y/n]: ").strip().lower()
-    if answer != "y":
+    if not answer.startswith("y"):
         return None
 
     root = tk.Tk()
@@ -368,9 +368,9 @@ def main():
     print("\n" + "=" * 60)
     print("Done.")
     print("=" * 60)
-    print(f"\nNEXT STEP: Run export_all_emails.py against: {output_file.name}")
-    answer = input("Run it now against that file? [y/n]: ").strip().lower()
-    if answer == "y":
+    print(f"\nNEXT STEP: Export {output_file.name} to Excel.")
+    answer = input(f"Export '{output_file.name}' to .xlsx now? [y/n]: ").strip().lower()
+    if answer.startswith("y"):
         import subprocess, sys
         subprocess.run([sys.executable, str(SCRIPT_DIR / "export_all_emails.py"), str(output_file)], check=True)
     else:

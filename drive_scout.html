@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "on-primary-fixed": "#001c38",
+          "on-background": "#dae2fd",
+          "tertiary": "#4ae176",
+          "on-primary-fixed-variant": "#004880",
+          "primary-fixed-dim": "#a1c9ff",
+          "on-error-container": "#ffdad6",
+          "secondary-fixed-dim": "#b7c8e1",
+          "surface-dim": "#0b1326",
+          "on-secondary-fixed": "#0b1c30",
+          "outline-variant": "#404752",
+          "tertiary-fixed-dim": "#4ae176",
+          "on-primary": "#00325b",
+          "inverse-on-surface": "#283044",
+          "secondary-fixed": "#d3e4fe",
+          "on-surface": "#dae2fd",
+          "outline": "#8a919e",
+          "primary-container": "#3b9eff",
+          "on-tertiary": "#003915",
+          "on-surface-variant": "#c0c7d4",
+          "inverse-surface": "#dae2fd",
+          "surface-container": "#171f33",
+          "primary": "#a1c9ff",
+          "inverse-primary": "#0060a8",
+          "surface-container-low": "#131b2e",
+          "on-tertiary-fixed-variant": "#005321",
+          "primary-fixed": "#d3e4ff",
+          "error-container": "#93000a",
+          "on-secondary": "#213145",
+          "surface": "#0b1326",
+          "surface-container-high": "#222a3d",
+          "surface-container-lowest": "#060e20",
+          "error": "#ffb4ab",
+          "on-primary-container": "#00345e",
+          "on-tertiary-container": "#003b16",
+          "surface-container-highest": "#2d3449",
+          "tertiary-fixed": "#6bff8f",
+          "tertiary-container": "#00b251",
+          "surface-variant": "#2d3449",
+          "on-secondary-fixed-variant": "#38485d",
+          "surface-tint": "#a1c9ff",
+          "background": "#0b1326",
+          "secondary-container": "#3a4a5f",
+          "on-error": "#690005",
+          "on-secondary-container": "#a9bad3",
+          "on-tertiary-fixed": "#002109",
+          "secondary": "#b7c8e1",
+          "surface-bright": "#31394d"
+        },
+        fontFamily: {
+          "headline": ["Inter"],
+          "body": ["Inter"],
+          "label": ["Inter"],
+          "mono": ["JetBrains Mono"]
+        },
+        borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+      },
+    },
+  }
+</script>
+<style>
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    vertical-align: middle;
+  }
+  .custom-scrollbar::-webkit-scrollbar { width: 14px; }
+  .custom-scrollbar::-webkit-scrollbar-track { background: #0b1326; }
+  .custom-scrollbar::-webkit-scrollbar-thumb { background: #2d3449; border-radius: 10px; border: 3px solid #0b1326; }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #3b9eff; }
+  .node-loading { opacity: 0.5; }
+</style>
+</head>
+<body class="bg-surface text-on-surface font-body overflow-hidden h-screen flex">
+
+<!-- Side Nav -->
+<aside class="fixed left-0 top-0 h-full flex flex-col py-6 bg-[#131b2e] w-20 items-center z-50">
+  <div class="mb-8 opacity-50">
+    <span class="material-symbols-outlined text-primary text-2xl">monitoring</span>
+  </div>
+  <nav class="flex flex-col gap-6 items-center w-full">
+    <a class="text-[#3b9eff] border-r-2 border-[#3b9eff] w-full flex justify-center py-2" href="#">
+      <span class="material-symbols-outlined">folder_open</span>
+    </a>
+    <a class="text-[#c0c7d4] hover:text-[#dae2fd] hover:bg-[#171f33] w-full flex justify-center py-2 transition-all" href="#">
+      <span class="material-symbols-outlined">analytics</span>
+    </a>
+    <a class="text-[#c0c7d4] hover:text-[#dae2fd] hover:bg-[#171f33] w-full flex justify-center py-2 transition-all" href="#">
+      <span class="material-symbols-outlined">history</span>
+    </a>
+  </nav>
+  <div class="mt-auto flex flex-col gap-6 items-center w-full">
+    <a class="text-[#c0c7d4] hover:text-[#dae2fd] hover:bg-[#171f33] w-full flex justify-center py-2 transition-all" href="#">
+      <span class="material-symbols-outlined">settings</span>
+    </a>
+  </div>
+</aside>
+
+<div class="flex flex-col flex-1 ml-20">
+
+  <!-- Top Bar -->
+  <header class="flex items-center justify-between px-6 py-3 w-full bg-[#131b2e] z-40">
+    <div class="flex items-center gap-8">
+      <h1 class="text-xl font-bold tracking-tighter text-[#dae2fd] font-headline uppercase">Drive Scout</h1>
+      <div class="hidden lg:flex items-center gap-6">
+        <div class="flex items-center gap-3">
+          <span class="text-[10px] font-mono text-on-surface-variant uppercase tracking-widest">Workers</span>
+          <input id="workers-slider" class="w-32 h-1 bg-surface-container-highest rounded-full appearance-none cursor-pointer accent-primary" max="64" min="1" type="range" value="16"/>
+          <span id="workers-display" class="font-mono text-xs text-primary">16</span>
+        </div>
+        <div class="flex items-center bg-surface-container-lowest px-3 py-1.5 rounded-lg border border-outline-variant/10">
+          <span class="material-symbols-outlined text-sm text-on-surface-variant mr-2">block</span>
+          <input id="exclude-input" class="bg-transparent border-none text-xs p-0 focus:ring-0 w-48 text-on-surface placeholder:text-outline/50" placeholder="Exclude paths..." type="text"/>
+        </div>
+      </div>
+    </div>
+    <div class="flex items-center gap-3">
+      <!-- WS status indicator -->
+      <span id="ws-indicator" class="w-2 h-2 rounded-full bg-outline" title="Disconnected"></span>
+      <button onclick="stopAll()" class="border border-error/40 hover:border-error text-error px-4 py-1.5 rounded-lg text-sm font-semibold hover:bg-error/5 active:scale-95 transition-all flex items-center gap-2">
+        <span class="material-symbols-outlined text-lg">stop_circle</span>Stop All
+      </button>
+    </div>
+  </header>
+
+  <main class="flex flex-1 overflow-hidden">
+
+    <!-- Left Panel: Directory Tree -->
+    <section class="w-[30%] bg-surface-container-low flex flex-col border-r border-outline-variant/5">
+      <div class="p-4 flex items-center justify-between">
+        <h2 class="text-xs font-bold uppercase tracking-widest text-on-surface-variant flex items-center gap-2">
+          <span class="material-symbols-outlined text-sm">account_tree</span>Explorer
+        </h2>
+        <div class="flex gap-4">
+          <span class="text-[9px] font-bold uppercase tracking-tighter text-outline/50 w-16 text-right">Files</span>
+          <span class="text-[9px] font-bold uppercase tracking-tighter text-outline/50 w-12 text-right">Size</span>
+        </div>
+      </div>
+
+      <div id="tree-container" class="flex-1 overflow-y-auto custom-scrollbar px-2">
+        <div class="text-xs text-on-surface-variant p-4 animate-pulse">Loading drives...</div>
+      </div>
+
+      <!-- Bottom Toolbar -->
+      <div class="p-4 bg-surface-container-lowest border-t border-outline-variant/5">
+        <!-- Scan type toggle -->
+        <div class="flex gap-2 mb-3">
+          <button id="btn-scan-dirs" onclick="setScanType('dirs')"
+            class="flex-1 py-1 rounded text-[10px] font-bold uppercase tracking-widest border border-primary/30 text-primary bg-primary/10 transition-all">
+            Dir Scan
+          </button>
+          <button id="btn-scan-files" onclick="setScanType('files')"
+            class="flex-1 py-1 rounded text-[10px] font-bold uppercase tracking-widest border border-outline-variant/20 text-on-surface-variant hover:border-primary/30 hover:text-primary transition-all">
+            File Scan
+          </button>
+        </div>
+        <button id="launch-btn" onclick="handleLaunch()" disabled
+          class="w-full bg-surface-container-highest border border-primary/20 text-primary py-2.5 rounded text-xs font-bold uppercase tracking-widest hover:bg-primary hover:text-on-primary-container transition-all flex items-center justify-center gap-2 opacity-50 cursor-not-allowed">
+          <span class="material-symbols-outlined text-lg">rocket_launch</span>Launch Scan
+        </button>
+        <button onclick="selectAllDrives()" id="select-all-btn"
+          class="w-full mt-2 bg-surface-container border border-outline-variant/20 text-on-surface-variant py-2 rounded text-xs font-bold uppercase tracking-widest hover:bg-surface-container-high hover:text-on-surface transition-all flex items-center justify-center gap-2">
+          <span class="material-symbols-outlined text-base">select_all</span>Select All Folders
+        </button>
+        <div class="flex items-center justify-center gap-3 mt-2">
+          <p id="selection-count" class="text-[10px] text-on-surface-variant italic">No directories selected</p>
+          <button onclick="deselectAll()" id="deselect-all-btn" style="display:none"
+            class="text-[10px] text-error hover:text-error font-bold uppercase tracking-widest flex items-center gap-1 opacity-70 hover:opacity-100 transition-opacity">
+            <span class="material-symbols-outlined" style="font-size:12px">close</span>Clear
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right Panel -->
+    <section class="w-[70%] flex flex-col bg-surface overflow-hidden">
+
+      <!-- NL Command Bar -->
+      <div class="p-6 bg-surface-container">
+        <div class="relative group">
+          <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+            <span class="material-symbols-outlined text-primary/60 group-focus-within:text-primary">electric_bolt</span>
+          </div>
+          <input id="nl-input" class="w-full bg-surface-container-lowest border-none rounded-xl py-4 pl-12 pr-16 text-on-surface font-mono text-sm focus:ring-2 focus:ring-primary/20 placeholder:text-outline-variant/50 shadow-inner"
+            type="text" placeholder="e.g. everything in the litigation tree but only 2 levels deep"/>
+          <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+            <kbd class="px-2 py-1 text-[10px] font-mono text-on-surface-variant bg-surface-container rounded border border-outline-variant/20 uppercase">⏎ Enter</kbd>
+          </div>
+        </div>
+      </div>
+
+      <div id="scans-container" class="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-4">
+
+        <!-- Confirmation card (hidden by default) -->
+        <div id="confirmation-card" class="hidden bg-surface-container-high/50 backdrop-blur-sm p-5 rounded-xl border border-primary/20 flex flex-col gap-4 relative overflow-hidden">
+          <div class="absolute top-0 right-0 p-2 opacity-5">
+            <span class="material-symbols-outlined text-6xl">verified_user</span>
+          </div>
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-lg bg-primary-container/20 flex items-center justify-center text-primary">
+              <span class="material-symbols-outlined">rule</span>
+            </div>
+            <div>
+              <h3 class="text-on-surface font-bold">Confirm Scan</h3>
+              <p id="confirmation-desc" class="text-sm text-on-surface-variant mt-1"></p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 ml-14">
+            <button onclick="confirmScan()" class="bg-primary text-on-primary-container px-4 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider hover:brightness-110">Confirm</button>
+            <button onclick="hideConfirmation()" class="text-on-surface-variant hover:text-on-surface px-4 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider">Cancel</button>
+          </div>
+        </div>
+
+        <!-- Active scans injected here by JS -->
+
+        <!-- Scan History -->
+        <div id="scan-history">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <div style="display:flex;align-items:center;gap:10px">
+              <h4 class="text-xs font-bold uppercase tracking-widest text-on-surface-variant px-1">Scan History</h4>
+              <a id="output-dir-link" href="#" style="font-size:10px;font-family:monospace;color:#8a919e;text-decoration:underline;text-decoration-color:#8a919e40;white-space:nowrap" title="Open output folder in Explorer">drive_scout_output\</a>
+            </div>
+            <div id="history-sort-bar" style="display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end">
+              <!-- sort buttons injected by JS -->
+            </div>
+          </div>
+          <div id="history-list" class="space-y-2">
+            <p class="text-xs text-on-surface-variant italic px-1">No scans yet.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- ================================================================
+     JavaScript
+================================================================ -->
+<script>
+const API = 'http://localhost:8765';
+const WS_URL = `ws://localhost:8765/ws/`;
+
+const state = {
+  clientId:    Math.random().toString(36).substr(2, 9),
+  ws:          null,
+  selected:    new Set(),     // selected paths
+  scanType:    'dirs',
+  workers:     16,
+  excludePaths: [],
+  pending:     null,          // pending NL confirmation
+  scans:       {},            // id -> scan object
+};
+
+// ---------------------------------------------------------------
+// WebSocket
+// ---------------------------------------------------------------
+
+function initWS() {
+  const ws = new WebSocket(WS_URL + state.clientId);
+  state.ws = ws;
+
+  ws.onopen = () => {
+    document.getElementById('ws-indicator').className = 'w-2 h-2 rounded-full bg-tertiary';
+    document.getElementById('ws-indicator').title = 'Connected';
+  };
+
+  ws.onclose = () => {
+    document.getElementById('ws-indicator').className = 'w-2 h-2 rounded-full bg-error';
+    document.getElementById('ws-indicator').title = 'Disconnected – reconnecting...';
+    setTimeout(initWS, 2000);
+  };
+
+  ws.onmessage = (evt) => {
+    const msg = JSON.parse(evt.data);
+    if (msg.type === 'init') {
+      // Restore persisted history directly into historyScans
+      const done = msg.scans.filter(s => ['done','error','stopped'].includes(s.status));
+      const live = msg.scans.filter(s => !['done','error','stopped'].includes(s.status));
+      done.forEach(s => { historyScans.push(s); state.scans[s.id] = s; });
+      if (done.length) { renderHistory(); done.forEach(s => updateTreeNode(s)); }
+      live.forEach(s => upsertScanCard(s));
+    } else if (msg.type === 'count_update') {
+      updateCounter(msg.scan_id, msg.count);
+    } else if (msg.type === 'scan_update') {
+      upsertScanCard(msg.scan);
+    }
+  };
+}
+
+// ---------------------------------------------------------------
+// Elapsed timer (ticks every second for running scans)
+// ---------------------------------------------------------------
+
+setInterval(() => {
+  Object.values(state.scans).forEach(s => {
+    if (s.status !== 'running' || !s.start_time) return;
+    const card = document.getElementById(`sc-${s.id}`);
+    if (!card) return;
+    const el = card.querySelector('.elapsed');
+    if (!el) return;
+    const t0   = new Date(s.start_time);
+    const secs = Math.floor((Date.now() - t0) / 1000);
+    el.textContent = `${Math.floor(secs/60)}:${(secs%60).toString().padStart(2,'0')}`;
+  });
+}, 1000);
+
+// ---------------------------------------------------------------
+// Directory Tree
+// ---------------------------------------------------------------
+
+async function loadDrives() {
+  const res  = await fetch(`${API}/api/drives`);
+  const data = await res.json();
+  const container = document.getElementById('tree-container');
+  container.innerHTML = '';
+  data.drives.forEach(d => {
+    container.appendChild(buildNode(d.path, d.name, 'hard_drive'));
+  });
+}
+
+function buildNode(path, name, icon = 'folder', isSystem = false) {
+  const wrap = document.createElement('div');
+  wrap.className = 'tree-node';
+  wrap.dataset.path = path;
+  if (isSystem) wrap.dataset.system = 'true';
+
+  const nameColor  = isSystem ? '#5c6880' : '#dae2fd';
+  const iconColor  = isSystem ? '#4a5568' : '#a1c9ff';
+  const chevColor  = isSystem ? '#4a5568' : '#c0c7d4';
+  const sysbadge   = isSystem
+    ? `<span class="material-symbols-outlined" title="System directory — excluded from bulk scans" style="font-size:13px;color:#7a3535;flex-shrink:0;margin-left:4px">shield</span>`
+    : '';
+  const sysBoxStyle = isSystem ? 'border-left:2px solid #7a3535;padding-left:4px;' : '';
+
+  wrap.innerHTML = `
+    <div class="node-row flex items-center gap-2 py-1.5 px-2 rounded cursor-pointer group select-none" style="${sysBoxStyle}hover:background:#222a3d">
+      <span class="chevron material-symbols-outlined text-sm transition-transform" style="color:${chevColor};font-size:18px">chevron_right</span>
+      <input type="checkbox" class="node-cb rounded-sm focus:ring-0 flex-shrink-0" style="width:14px;height:14px;accent-color:#a1c9ff"/>
+      <span class="material-symbols-outlined" style="color:${iconColor};font-size:20px">${icon}</span>
+      <span class="node-name" style="color:${nameColor};font-size:13px;font-family:'JetBrains Mono',monospace;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;${isSystem ? 'font-style:italic' : ''}" title="${path}">${name}</span>
+      ${sysbadge}
+      <span class="ml-auto flex items-center gap-4 flex-shrink-0">
+        <span class="node-count" style="color:#a1c9ff;font-size:10px;font-family:'JetBrains Mono',monospace;width:64px;text-align:right"></span>
+        <span class="node-size" style="color:#c0c7d4;font-size:10px;font-family:'JetBrains Mono',monospace;width:48px;text-align:right"></span>
+      </span>
+    </div>
+    <div class="children hidden" style="margin-left:20px;border-left:1px solid #40475220"></div>
+  `;
+
+  const row      = wrap.querySelector('.node-row');
+  const chevron  = wrap.querySelector('.chevron');
+  const cb       = wrap.querySelector('.node-cb');
+  const children = wrap.querySelector('.children');
+
+  // Apply most recent scan data for this path
+  const matchingScans = Object.values(state.scans).filter(s =>
+    (s.paths||[]).includes(path) && (s.file_count > 0 || s.size_bytes > 0)
+  );
+  if (matchingScans.length > 0) {
+    const best = matchingScans.reduce((a, b) =>
+      (a.start_time || '') > (b.start_time || '') ? a : b
+    );
+    const cEl = wrap.querySelector('.node-count');
+    const sEl = wrap.querySelector('.node-size');
+    if (cEl) cEl.textContent = best.file_count.toLocaleString() + ' files';
+    if (sEl) sEl.textContent = fmtBytes(best.size_bytes);
+  }
+
+  // Right-click context menu
+  row.addEventListener('contextmenu', (e) => showCtxMenu(e, path));
+
+  // Expand / collapse on row click (not checkbox)
+  row.addEventListener('click', (e) => {
+    if (e.target === cb) return;
+    toggleNode(wrap, path, chevron, children);
+  });
+
+  // Selection
+  cb.addEventListener('change', () => {
+    if (cb.checked) state.selected.add(path);
+    else            state.selected.delete(path);
+    updateSelectionUI();
+  });
+
+  return wrap;
+}
+
+async function toggleNode(wrap, path, chevron, childrenEl) {
+  if (!childrenEl.classList.contains('hidden')) {
+    childrenEl.classList.add('hidden');
+    chevron.textContent = 'chevron_right';
+    return;
+  }
+
+  if (childrenEl.children.length === 0) {
+    chevron.textContent = 'hourglass_empty';
+    wrap.classList.add('node-loading');
+    try {
+      const res  = await fetch(`${API}/api/tree?path=${encodeURIComponent(path)}`);
+      const data = await res.json();
+      childrenEl.innerHTML = '';
+      if (data.children && data.children.length > 0) {
+        data.children.forEach(c => childrenEl.appendChild(buildNode(c.path, c.name, 'folder', c.is_system)));
+      } else {
+        childrenEl.innerHTML = '<div class="text-[10px] text-outline px-3 py-1 italic">empty</div>';
+      }
+    } catch (e) {
+      childrenEl.innerHTML = '<div class="text-[10px] text-error px-3 py-1 italic">error loading</div>';
+    }
+    wrap.classList.remove('node-loading');
+  }
+
+  chevron.textContent = 'expand_more';
+  childrenEl.classList.remove('hidden');
+}
+
+// ---------------------------------------------------------------
+// Selection
+// ---------------------------------------------------------------
+
+function updateSelectionUI() {
+  const n   = state.selected.size;
+  const el  = document.getElementById('selection-count');
+  const btn = document.getElementById('launch-btn');
+  const clr = document.getElementById('deselect-all-btn');
+  el.textContent = n === 0 ? 'No directories selected' : `${n} director${n === 1 ? 'y' : 'ies'} selected`;
+  btn.disabled   = n === 0;
+  btn.classList.toggle('opacity-50',       n === 0);
+  btn.classList.toggle('cursor-not-allowed', n === 0);
+  btn.classList.toggle('cursor-pointer',     n > 0);
+  if (clr) clr.style.display = n > 0 ? 'inline-flex' : 'none';
+}
+
+// ---------------------------------------------------------------
+// Expand all below (recursive)
+// ---------------------------------------------------------------
+
+async function expandAllBelow(path) {
+  const node = findTreeNode(path);
+  if (!node) return;
+  const chevron  = node.querySelector('.chevron');
+  const children = node.querySelector('.children');
+  // Expand this node first
+  if (children.classList.contains('hidden') || children.children.length === 0) {
+    await toggleNode(node, path, chevron, children);
+  }
+  // Then recursively expand all child tree-nodes
+  const childNodes = Array.from(children.querySelectorAll(':scope > .tree-node'));
+  for (const child of childNodes) {
+    const childPath = child.dataset.path;
+    if (childPath) await expandAllBelow(childPath);
+  }
+}
+
+// ---------------------------------------------------------------
+// Select children (immediate subdirs only)
+// ---------------------------------------------------------------
+
+async function selectChildren(path) {
+  const node = findTreeNode(path);
+  if (!node) return;
+  const children = node.querySelector('.children');
+  // Expand if needed so children exist in DOM
+  if (children.classList.contains('hidden') || children.children.length === 0) {
+    const chevron = node.querySelector('.chevron');
+    await toggleNode(node, path, chevron, children);
+  }
+  Array.from(children.querySelectorAll(':scope > .tree-node')).forEach(child => {
+    if (child.dataset.system === 'true') return;
+    const cb = child.querySelector('.node-cb');
+    if (cb && !cb.checked) { cb.checked = true; cb.dispatchEvent(new Event('change')); }
+  });
+}
+
+// ---------------------------------------------------------------
+// Select / deselect all below (full subtree)
+// ---------------------------------------------------------------
+
+async function selectAllBelow(path, shouldSelect) {
+  const node = findTreeNode(path);
+  if (!node) return;
+  const children = node.querySelector('.children');
+  if (children.classList.contains('hidden') || children.children.length === 0) {
+    const chevron = node.querySelector('.chevron');
+    await toggleNode(node, path, chevron, children);
+  }
+  const allNodes = Array.from(children.querySelectorAll('.tree-node'));
+  for (const n of allNodes) {
+    if (shouldSelect && n.dataset.system === 'true') continue;
+    if (shouldSelect && state.excludePaths.some(ex => n.dataset.path?.toLowerCase().startsWith(ex.toLowerCase()))) continue;
+    const cb = n.querySelector('.node-cb');
+    if (cb && cb.checked !== shouldSelect) {
+      cb.checked = shouldSelect;
+      cb.dispatchEvent(new Event('change'));
+    }
+  }
+}
+
+// ---------------------------------------------------------------
+// Deselect all (global)
+// ---------------------------------------------------------------
+
+function deselectAll() {
+  document.querySelectorAll('.node-cb:checked').forEach(cb => {
+    cb.checked = false;
+    cb.dispatchEvent(new Event('change'));
+  });
+}
+
+async function selectAllDrives() {
+  const btn = document.getElementById('select-all-btn');
+  btn.disabled = true;
+  btn.textContent = 'Selecting…';
+  const roots = Array.from(document.querySelectorAll('#tree-container > .tree-node'));
+  for (const node of roots) {
+    if (node.dataset.system === 'true') continue;
+    if (state.excludePaths.some(ex => node.dataset.path?.toLowerCase().startsWith(ex.toLowerCase()))) continue;
+    await selectAllBelow(node.dataset.path, true);
+  }
+  btn.disabled = false;
+  btn.innerHTML = '<span class="material-symbols-outlined text-base">select_all</span>Select All Folders';
+}
+
+// ---------------------------------------------------------------
+// Scan type toggle
+// ---------------------------------------------------------------
+
+function setScanType(type) {
+  state.scanType = type;
+  const activeClass   = 'border-primary/30 text-primary bg-primary/10';
+  const inactiveClass = 'border-outline-variant/20 text-on-surface-variant hover:border-primary/30 hover:text-primary';
+  document.getElementById('btn-scan-dirs').className  = `flex-1 py-1 rounded text-[10px] font-bold uppercase tracking-widest border transition-all ${type === 'dirs'  ? activeClass : inactiveClass}`;
+  document.getElementById('btn-scan-files').className = `flex-1 py-1 rounded text-[10px] font-bold uppercase tracking-widest border transition-all ${type === 'files' ? activeClass : inactiveClass}`;
+}
+
+// ---------------------------------------------------------------
+// Natural language command bar
+// ---------------------------------------------------------------
+
+async function submitNL() {
+  const text = document.getElementById('nl-input').value.trim();
+  if (!text) return;
+
+  const res    = await fetch(`${API}/api/nl_parse`, {
+    method:  'POST',
+    headers: {'Content-Type': 'application/json'},
+    body:    JSON.stringify({ text, known_paths: Array.from(state.selected) }),
+  });
+  const result = await res.json();
+  state.pending = result;
+
+  const desc = document.getElementById('confirmation-desc');
+  desc.innerHTML = result.summary
+    .replace(/`([^`]+)`/g, '<span class="font-mono text-primary">$1</span>');
+
+  // Highlight matching paths in tree
+  result.paths.forEach(p => highlightTreeNode(p));
+
+  document.getElementById('confirmation-card').classList.remove('hidden');
+  document.getElementById('confirmation-card').scrollIntoView({ behavior: 'smooth' });
+}
+
+function highlightTreeNode(path) {
+  document.querySelectorAll('.tree-node').forEach(n => {
+    if (n.dataset.path === path) {
+      n.querySelector('.node-row').classList.add('ring-1', 'ring-primary', 'bg-primary/10');
+    }
+  });
+}
+
+function hideConfirmation() {
+  document.getElementById('confirmation-card').classList.add('hidden');
+  state.pending = null;
+}
+
+async function confirmScan() {
+  const c = state.pending;
+  if (!c || !c.paths.length) return;
+  hideConfirmation();
+  await launchScan(c.paths, c.scan_type, state.workers, c.exclude, c.depth);
+}
+
+// ---------------------------------------------------------------
+// Launch scan
+// ---------------------------------------------------------------
+
+async function handleLaunch() {
+  const paths = Array.from(state.selected);
+  if (!paths.length) return;
+  await launchScan(paths, state.scanType, state.workers, state.excludePaths, null);
+}
+
+async function launchScan(paths, scanType, workers, exclude, depth) {
+  // One scan per path so results are correctly attributed
+  for (const path of paths) {
+    const res  = await fetch(`${API}/api/scan/start`, {
+      method:  'POST',
+      headers: {'Content-Type': 'application/json'},
+      body:    JSON.stringify({ paths: [path], scan_type: scanType, workers, exclude: exclude || [], depth }),
+    });
+    const data = await res.json();
+    if (data.scan) upsertScanCard(data.scan);
+  }
+}
+
+async function stopScan(id) {
+  await fetch(`${API}/api/scan/stop`, {
+    method:  'POST',
+    headers: {'Content-Type': 'application/json'},
+    body:    JSON.stringify({ scan_id: id }),
+  });
+}
+
+async function stopAll() {
+  Object.values(state.scans)
+    .filter(s => s.status === 'running' || s.status === 'queued')
+    .forEach(s => stopScan(s.id));
+}
+
+// ---------------------------------------------------------------
+// Scan cards
+// ---------------------------------------------------------------
+
+function findTreeNode(path) {
+  return Array.from(document.querySelectorAll('.tree-node'))
+    .find(n => n.dataset.path === path) || null;
+}
+
+function getAncestorPaths(targetPath) {
+  // Returns all ancestor paths from drive root down to target
+  // e.g. C:\Users\arika\OneDrive → ['C:\', 'C:\Users', 'C:\Users\arika', 'C:\Users\arika\OneDrive']
+  const norm  = targetPath.replace(/\//g, '\\');
+  const parts = norm.split('\\').filter(Boolean);
+  const ancestors = [parts[0] + '\\']; // drive root e.g. C:\
+  let cur = parts[0];
+  for (let i = 1; i < parts.length; i++) {
+    cur = cur + '\\' + parts[i];
+    ancestors.push(cur);
+  }
+  return ancestors;
+}
+
+async function navigateToPath(targetPath) {
+  const ancestors = getAncestorPaths(targetPath);
+
+  // Expand each ancestor so the target node exists in the DOM
+  for (let i = 0; i < ancestors.length - 1; i++) {
+    const node = findTreeNode(ancestors[i]);
+    if (!node) continue;
+    const chevron  = node.querySelector('.chevron');
+    const children = node.querySelector('.children');
+    if (children && (children.classList.contains('hidden') || children.children.length === 0)) {
+      await toggleNode(node, ancestors[i], chevron, children);
+    }
+  }
+
+  // Scroll to and flash the target node
+  const target = findTreeNode(targetPath);
+  if (!target) return;
+  target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  const row = target.querySelector('.node-row');
+  row.style.outline    = '1px solid #3b9eff';
+  row.style.background = '#3b9eff22';
+  setTimeout(() => { row.style.outline = ''; row.style.background = ''; }, 2000);
+}
+
+function updateTreeNode(scan) {
+  (scan.paths || []).forEach(path => {
+    const node = findTreeNode(path);
+    if (!node) return;
+    // Only update if this scan is more recent than what's already shown
+    const existing = node.dataset.scanTime || '';
+    if ((scan.start_time || '') < existing) return;
+    node.dataset.scanTime = scan.start_time || '';
+    const countEl = node.querySelector('.node-count');
+    const sizeEl  = node.querySelector('.node-size');
+    if (countEl && scan.file_count != null) countEl.textContent = scan.file_count.toLocaleString() + ' files';
+    if (sizeEl  && scan.size_bytes  != null) sizeEl.textContent  = fmtBytes(scan.size_bytes);
+  });
+}
+
+function upsertScanCard(scan) {
+  state.scans[scan.id] = scan;
+  // Update tree node whenever we get new data
+  if (scan.file_count > 0 || scan.size_bytes > 0) updateTreeNode(scan);
+
+  let card = document.getElementById(`sc-${scan.id}`);
+  if (!card) {
+    card = createScanCard(scan);
+    const history = document.getElementById('scan-history');
+    document.getElementById('scans-container').insertBefore(card, history);
+  }
+  refreshScanCard(card, scan);
+}
+
+function createScanCard(scan) {
+  const unit = scan.scan_type === 'files' ? 'files' : 'items';
+  const div  = document.createElement('div');
+  div.id        = `sc-${scan.id}`;
+  div.className = 'bg-surface-container-lowest p-5 rounded-xl border border-outline-variant/5 shadow-2xl';
+  div.innerHTML = `
+    <div class="flex items-center justify-between mb-4">
+      <div class="flex items-center gap-4">
+        <div class="flex items-center gap-3">
+          <div class="relative flex h-3 w-3">
+            <span class="ping animate-ping absolute inline-flex h-full w-full rounded-full bg-tertiary opacity-75"></span>
+            <span class="dot relative inline-flex rounded-full h-3 w-3 bg-tertiary"></span>
+          </div>
+          <span class="status-label text-xs font-bold uppercase tracking-widest text-tertiary">Running</span>
+        </div>
+        <button onclick="stopScan('${scan.id}')"
+          class="bg-error/10 hover:bg-error/20 text-error px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-widest border border-error/30 transition-colors flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm">stop</span>Stop
+        </button>
+      </div>
+      <span class="font-mono text-xs text-on-surface-variant">ID: #${scan.id}</span>
+    </div>
+    <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
+      <div class="flex flex-col gap-1 col-span-2">
+        <span style="color:#c0c7d4;font-size:10px" class="uppercase tracking-widest">Path</span>
+        <span onclick="navigateToPath('${(scan.paths||[''])[0]}')" style="color:#a1c9ff;font-size:11px;font-family:monospace;cursor:pointer;text-decoration:underline;text-decoration-color:#a1c9ff40" class="truncate" title="${(scan.paths||[]).join(', ')}">${(scan.paths||[''])[0]}</span>
+      </div>
+      <div class="flex flex-col gap-1">
+        <span style="color:#c0c7d4;font-size:10px" class="uppercase tracking-widest">Subdirs</span>
+        <span class="subdir-count" style="color:#a1c9ff;font-size:14px;font-family:monospace">—</span>
+      </div>
+      <div class="flex flex-col gap-1">
+        <span style="color:#c0c7d4;font-size:10px" class="uppercase tracking-widest">Files</span>
+        <span class="file-count" style="color:#a1c9ff;font-size:14px;font-family:monospace">—</span>
+      </div>
+      <div class="flex flex-col gap-1">
+        <span style="color:#c0c7d4;font-size:10px" class="uppercase tracking-widest">Size</span>
+        <span class="size-display" style="color:#a1c9ff;font-size:14px;font-family:monospace">—</span>
+      </div>
+    </div>
+    <div class="flex items-center gap-6 mt-3">
+      <span style="color:#c0c7d4;font-size:10px" class="uppercase tracking-widest">Time</span>
+      <span class="elapsed" style="color:#dae2fd;font-size:12px;font-family:monospace">0:00</span>
+    </div>
+    <div class="mt-4 w-full h-1.5 bg-surface-container rounded-full overflow-hidden">
+      <div class="progress-bar h-full bg-gradient-to-r from-primary-container to-primary shadow-[0_0_8px_rgba(59,158,255,0.4)] animate-pulse w-full"></div>
+    </div>
+  `;
+  return div;
+}
+
+function refreshScanCard(card, scan) {
+  const unit       = scan.scan_type === 'files' ? 'files' : 'items';
+  const subdirEl   = card.querySelector('.subdir-count');
+  const fileEl     = card.querySelector('.file-count');
+  const sizeEl     = card.querySelector('.size-display');
+  const elapsed    = card.querySelector('.elapsed');
+  const label      = card.querySelector('.status-label');
+
+  if (subdirEl && scan.subdir_count > 0) subdirEl.textContent = scan.subdir_count.toLocaleString();
+  if (fileEl   && scan.file_count   > 0) fileEl.textContent   = scan.file_count.toLocaleString();
+  if (sizeEl   && scan.size_bytes   > 0) sizeEl.textContent   = fmtBytes(scan.size_bytes);
+  const ping    = card.querySelector('.ping');
+  const dot     = card.querySelector('.dot');
+  const bar     = card.querySelector('.progress-bar');
+
+  if (elapsed && scan.elapsed) elapsed.textContent = scan.elapsed;
+
+  const statusMap = {
+    running: { text: 'Running',  color: 'text-tertiary', dotBg: 'bg-tertiary', barClass: 'animate-pulse w-full' },
+    queued:  { text: 'Queued',   color: 'text-primary',  dotBg: 'bg-primary',  barClass: 'w-0' },
+    done:    { text: 'Complete', color: 'text-tertiary', dotBg: 'bg-tertiary', barClass: 'w-full' },
+    error:   { text: 'Error',    color: 'text-error',    dotBg: 'bg-error',    barClass: 'w-full bg-error' },
+    stopped: { text: 'Stopped',  color: 'text-outline',  dotBg: 'bg-outline',  barClass: 'w-full' },
+  };
+  const s = statusMap[scan.status] || statusMap.running;
+
+  if (label) { label.textContent = s.text; label.className = `status-label text-xs font-bold uppercase tracking-widest ${s.color}`; }
+  if (dot)   { dot.className = `dot relative inline-flex rounded-full h-3 w-3 ${s.dotBg}`; }
+  if (ping)  { ping.className = scan.status === 'running' ? 'ping animate-ping absolute inline-flex h-full w-full rounded-full bg-tertiary opacity-75' : 'hidden'; }
+  if (bar)   {
+    bar.className = `progress-bar h-full bg-gradient-to-r from-primary-container to-primary shadow-[0_0_8px_rgba(59,158,255,0.4)] ${s.barClass}`;
+    if (scan.status !== 'running') bar.classList.remove('animate-pulse');
+  }
+
+  // Move completed scans to history after a delay
+  if (scan.status === 'done' || scan.status === 'error' || scan.status === 'stopped') {
+    setTimeout(() => moveToHistory(scan), 3000);
+  }
+}
+
+function updateCounter(scanId, count) {
+  const scan = state.scans[scanId];
+  if (scan) scan.count = count;
+  const card = document.getElementById(`sc-${scanId}`);
+  if (!card) return;
+  const unit    = (scan?.scan_type === 'files') ? 'files' : 'items';
+  const counter = card.querySelector('.counter');
+  if (counter) counter.textContent = `${count.toLocaleString()} ${unit}`;
+}
+
+// ---------------------------------------------------------------
+// Scan history store + sort
+// ---------------------------------------------------------------
+
+const historyScans = [];   // completed scans in insertion order
+let historySort = { field: 'start_time', dir: 'desc' };
+
+const SORT_FIELDS = [
+  { key: 'path',         label: 'Path',    val: s => (s.paths||[''])[0].toLowerCase() },
+  { key: 'subdir_count', label: 'Subdirs', val: s => s.subdir_count || 0 },
+  { key: 'file_count',   label: 'Files',   val: s => s.file_count   || 0 },
+  { key: 'size_bytes',   label: 'Size',    val: s => s.size_bytes   || 0 },
+  { key: 'start_time',   label: 'Date',    val: s => s.start_time   || '' },
+  { key: 'scan_type',    label: 'Type',    val: s => s.scan_type    || '' },
+];
+
+function initSortBar() {
+  const bar = document.getElementById('history-sort-bar');
+  SORT_FIELDS.forEach(f => {
+    const btn = document.createElement('button');
+    btn.id = `hsort-${f.key}`;
+    btn.dataset.field = f.key;
+    btn.style.cssText = 'font-size:9px;padding:2px 7px;border-radius:3px;border:1px solid #2e3a55;background:#131b2e;color:#8a919e;cursor:pointer;font-family:inherit;text-transform:uppercase;letter-spacing:0.06em;display:inline-flex;align-items:center;gap:3px';
+    btn.innerHTML = `${f.label} <span class="sort-arrow" style="font-size:9px"></span>`;
+    btn.addEventListener('click', () => {
+      if (historySort.field === f.key) {
+        historySort.dir = historySort.dir === 'asc' ? 'desc' : 'asc';
+      } else {
+        historySort.field = f.key;
+        historySort.dir   = f.key === 'path' || f.key === 'scan_type' ? 'asc' : 'desc';
+      }
+      updateSortBar();
+      renderHistory();
+    });
+    bar.appendChild(btn);
+  });
+  updateSortBar();
+}
+
+function updateSortBar() {
+  SORT_FIELDS.forEach(f => {
+    const btn = document.getElementById(`hsort-${f.key}`);
+    if (!btn) return;
+    const active = historySort.field === f.key;
+    btn.style.background    = active ? '#1e3a5f' : '#131b2e';
+    btn.style.color         = active ? '#a1c9ff' : '#8a919e';
+    btn.style.borderColor   = active ? '#4a7cc7' : '#2e3a55';
+    btn.querySelector('.sort-arrow').textContent =
+      active ? (historySort.dir === 'asc' ? '↑' : '↓') : '';
+  });
+}
+
+function buildHistoryRow(scan) {
+  const borderColor = scan.status === 'done' ? '#4ae176' : scan.status === 'error' ? '#ffb4ab' : '#8a919e';
+  const iconName    = scan.status === 'done' ? 'check_circle' : scan.status === 'error' ? 'error' : 'stop_circle';
+  const iconColor   = scan.status === 'done' ? '#4ae176' : scan.status === 'error' ? '#ffb4ab' : '#8a919e';
+  const pathStr     = (scan.paths||[]).join(', ') || '—';
+  const when        = scan.elapsed || '—';
+  let   dateStr     = '';
+  if (scan.start_time) {
+    try {
+      const d = new Date(scan.start_time);
+      dateStr = d.toLocaleDateString('en-US', {month:'2-digit',day:'2-digit'})
+              + ' ' + d.toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit',hour12:false});
+    } catch(e) {}
+  }
+
+  const filesStr = (scan.file_count || scan.count || 0).toLocaleString();
+  const sizeStr  = fmtBytes(scan.size_bytes || 0);
+  const typeStr  = scan.scan_type?.toUpperCase() || '—';
+
+  const row = document.createElement('div');
+  row.dataset.scanId = scan.id;
+  row.style.cssText = `border-left:2px solid ${borderColor};border-radius:0 4px 4px 0;margin-bottom:2px`;
+
+  row.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 12px;background:#171f33">
+      <div style="display:flex;align-items:center;gap:8px;min-width:0">
+        <span class="material-symbols-outlined" style="color:${iconColor};font-size:16px;flex-shrink:0">${iconName}</span>
+        <span class="hist-path-link" style="color:#a1c9ff;font-size:11px;font-family:monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;text-decoration:underline;text-decoration-color:#a1c9ff40" title="${pathStr}">${pathStr}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;flex-shrink:0;margin-left:12px;font-family:monospace">
+        <span style="color:#c0c7d4;font-size:10px">${filesStr} files</span>
+        <span style="color:#c0c7d4;font-size:10px">${sizeStr}</span>
+        <span style="color:#8a919e;font-size:10px">${typeStr}</span>
+        ${dateStr ? `<span style="color:#8a919e;font-size:10px">${dateStr}</span>` : ''}
+        <span style="color:#8a919e;font-size:10px">${when}</span>
+        ${scan.error ? `<span style="color:#ffb4ab;font-size:10px" title="${scan.error}">ERR</span>` : ''}
+      </div>
+    </div>
+  `;
+
+  const firstPath = (scan.paths||[''])[0];
+  row.querySelector('.hist-path-link').addEventListener('click', (e) => {
+    e.stopPropagation();
+    navigateToPath(firstPath);
+  });
+
+  return row;
+}
+
+function renderHistory() {
+  const list = document.getElementById('history-list');
+  list.innerHTML = '';
+
+  if (historyScans.length === 0) {
+    list.innerHTML = '<p class="text-xs text-on-surface-variant italic px-1">No scans yet.</p>';
+    return;
+  }
+
+  const sf = SORT_FIELDS.find(f => f.key === historySort.field);
+  const sorted = [...historyScans].sort((a, b) => {
+    const av = sf.val(a), bv = sf.val(b);
+    const cmp = av < bv ? -1 : av > bv ? 1 : 0;
+    return historySort.dir === 'asc' ? cmp : -cmp;
+  });
+
+  sorted.forEach(scan => list.appendChild(buildHistoryRow(scan)));
+}
+
+function moveToHistory(scan) {
+  const card = document.getElementById(`sc-${scan.id}`);
+  if (card) card.remove();
+
+  // Update or add to store
+  const idx = historyScans.findIndex(s => s.id === scan.id);
+  if (idx >= 0) historyScans[idx] = scan;
+  else          historyScans.push(scan);
+
+  renderHistory();
+}
+
+// ---------------------------------------------------------------
+// ---------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------
+
+function fmtBytes(b) {
+  if (!b) return '0 B';
+  const units = ['B','KB','MB','GB','TB'];
+  let i = 0;
+  while (b >= 1024 && i < units.length - 1) { b /= 1024; i++; }
+  return `${b.toFixed(i === 0 ? 0 : 1)} ${units[i]}`;
+}
+
+// ---------------------------------------------------------------
+// Right-click context menu
+// ---------------------------------------------------------------
+
+const ctxMenu = document.createElement('div');
+ctxMenu.id = 'ctx-menu';
+ctxMenu.style.cssText = `
+  position:fixed;display:none;z-index:9999;
+  background:#171f33;border:1px solid #40475280;border-radius:6px;
+  padding:4px;min-width:160px;box-shadow:0 8px 24px rgba(0,0,0,0.5)
+`;
+ctxMenu.innerHTML = `
+  <div class="ctx-item" data-action="scan-dirs">
+    <span class="material-symbols-outlined" style="font-size:16px;color:#a1c9ff">account_tree</span> Dir Scan
+  </div>
+  <div class="ctx-item" data-action="scan-files">
+    <span class="material-symbols-outlined" style="font-size:16px;color:#a1c9ff">description</span> File Scan
+  </div>
+  <div class="ctx-item" data-action="scan-deep">
+    <span class="material-symbols-outlined" style="font-size:16px;color:#a1c9ff">travel_explore</span> Deep Scan (recursive)
+  </div>
+  <div class="ctx-item" data-action="scan-deep-sheets">
+    <span class="material-symbols-outlined" style="font-size:16px;color:#4ae176">table_chart</span> Deep Scan → Sheets
+  </div>
+  <div style="border-top:1px solid #40475240;margin:4px 0"></div>
+  <div class="ctx-item" data-action="expand">
+    <span class="material-symbols-outlined" style="font-size:16px;color:#c0c7d4">expand_more</span> Expand
+  </div>
+  <div class="ctx-item" data-action="scan-deep-dirs">
+    <span class="material-symbols-outlined" style="font-size:16px;color:#4ae176">account_tree</span> Deep Dir Scan (recursive)
+  </div>
+  <div class="ctx-item" data-action="expand-all">
+    <span class="material-symbols-outlined" style="font-size:16px;color:#c0c7d4">expand_all</span> Expand All Below
+  </div>
+  <div style="border-top:1px solid #40475240;margin:4px 0"></div>
+  <div class="ctx-item" data-action="select">
+    <span class="material-symbols-outlined" style="font-size:16px;color:#c0c7d4">check_box</span> Select
+  </div>
+  <div class="ctx-item" data-action="select-children">
+    <span class="material-symbols-outlined" style="font-size:16px;color:#c0c7d4">checklist</span> Select Children
+  </div>
+  <div class="ctx-item" data-action="select-all-below">
+    <span class="material-symbols-outlined" style="font-size:16px;color:#c0c7d4">select_all</span> Select All Below
+  </div>
+  <div class="ctx-item" data-action="deselect-all-below">
+    <span class="material-symbols-outlined" style="font-size:16px;color:#ffb4ab">deselect</span> Deselect All Below
+  </div>
+  <div style="border-top:1px solid #40475240;margin:4px 0"></div>
+  <div class="ctx-item" data-action="exclude">
+    <span class="material-symbols-outlined" style="font-size:16px;color:#ffb4ab">block</span> Add to Exclusions
+  </div>
+  <div class="ctx-item" data-action="unexclude">
+    <span class="material-symbols-outlined" style="font-size:16px;color:#4ae176">check_circle</span> Remove from Exclusions
+  </div>
+`;
+
+const ctxStyle = document.createElement('style');
+ctxStyle.textContent = `
+  .ctx-item {
+    display:flex;align-items:center;gap:8px;
+    padding:6px 12px;border-radius:4px;cursor:pointer;
+    font-size:12px;color:#dae2fd;font-family:'JetBrains Mono',monospace;
+  }
+  .ctx-item:hover { background:#222a3d; }
+`;
+document.head.appendChild(ctxStyle);
+
+let ctxTargetPath = null;
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.body.appendChild(ctxMenu);
+});
+
+function showCtxMenu(e, path) {
+  e.preventDefault();
+  ctxTargetPath = path;
+  ctxMenu.style.display = 'block';
+  const x = Math.min(e.clientX, window.innerWidth  - 180);
+  const y = Math.min(e.clientY, window.innerHeight - 220);
+  ctxMenu.style.left = x + 'px';
+  ctxMenu.style.top  = y + 'px';
+}
+
+function hideCtxMenu() {
+  ctxMenu.style.display = 'none';
+  ctxTargetPath = null;
+}
+
+document.addEventListener('click', hideCtxMenu);
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideCtxMenu(); });
+
+ctxMenu.addEventListener('click', async (e) => {
+  const item = e.target.closest('.ctx-item');
+  if (!item || !ctxTargetPath) return;
+  const action     = item.dataset.action;
+  const targetPath = ctxTargetPath;   // capture before hideCtxMenu nulls it
+  hideCtxMenu();
+
+  if (action === 'scan-dirs') {
+    await launchScan([targetPath], 'dirs', state.workers, state.excludePaths, null);
+  } else if (action === 'scan-files') {
+    await launchScan([targetPath], 'files', state.workers, state.excludePaths, null);
+  } else if (action === 'scan-deep') {
+    await launchScan([targetPath], 'deep', state.workers, state.excludePaths, null);
+  } else if (action === 'scan-deep-sheets') {
+    await launchScan([targetPath], 'deep-sheets', state.workers, state.excludePaths, null);
+  } else if (action === 'scan-deep-dirs') {
+    await launchScan([targetPath], 'deep-dirs', state.workers, state.excludePaths, null);
+  } else if (action === 'expand') {
+    const node = findTreeNode(targetPath);
+    if (node) {
+      const chevron  = node.querySelector('.chevron');
+      const children = node.querySelector('.children');
+      await toggleNode(node, targetPath, chevron, children);
+    }
+  } else if (action === 'select') {
+    const node = findTreeNode(targetPath);
+    if (node) {
+      const cb = node.querySelector('.node-cb');
+      cb.checked = !cb.checked;
+      cb.dispatchEvent(new Event('change'));
+    }
+  } else if (action === 'expand-all') {
+    await expandAllBelow(targetPath);
+  } else if (action === 'select-children') {
+    await selectChildren(targetPath);
+  } else if (action === 'select-all-below') {
+    await selectAllBelow(targetPath, true);
+  } else if (action === 'deselect-all-below') {
+    await selectAllBelow(targetPath, false);
+  } else if (action === 'exclude') {
+    const input = document.getElementById('exclude-input');
+    const parts = input.value.split(',').map(s => s.trim()).filter(Boolean);
+    if (!parts.includes(targetPath)) parts.push(targetPath);
+    input.value = parts.join(', ');
+    input.dispatchEvent(new Event('change'));
+  } else if (action === 'unexclude') {
+    const input = document.getElementById('exclude-input');
+    const parts = input.value.split(',').map(s => s.trim()).filter(s => s && s !== targetPath);
+    input.value = parts.join(', ');
+    input.dispatchEvent(new Event('change'));
+  }
+});
+
+// ---------------------------------------------------------------
+// Workers slider + exclude input
+// ---------------------------------------------------------------
+
+document.addEventListener('DOMContentLoaded', () => {
+  const slider  = document.getElementById('workers-slider');
+  const display = document.getElementById('workers-display');
+  slider.addEventListener('input', () => {
+    state.workers = parseInt(slider.value);
+    display.textContent = slider.value;
+  });
+
+  document.getElementById('exclude-input').addEventListener('change', (e) => {
+    state.excludePaths = e.target.value.split(',').map(s => s.trim()).filter(Boolean);
+  });
+
+  document.getElementById('output-dir-link').addEventListener('click', (e) => {
+    e.preventDefault();
+    fetch(`${API}/api/open-output-dir`);
+  });
+
+  document.getElementById('nl-input').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') submitNL();
+  });
+
+  // Init
+  initWS();
+  loadDrives();
+  updateSelectionUI();
+  initSortBar();
+});
+</script>
+</body>
+</html>

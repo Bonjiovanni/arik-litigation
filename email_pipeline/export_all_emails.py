@@ -5,7 +5,7 @@ Reads a combined_repository.json and exports all records / all fields
 to an Excel file.
 
 When run standalone: prompts for input and output files via file picker
-(remembers last choices in merge_config.json).
+(remembers last choices in Email_Body_Processing_Config.json).
 When called from merge_and_classify.py: input path passed as argv[1],
 still prompts for output file.
 
@@ -198,13 +198,6 @@ def main():
     })
     ws = wb.add_worksheet("All Emails")
 
-    hdr_fmt = wb.add_format({
-        "bold":       True,
-        "font_color": "#FFFFFF",
-        "bg_color":   "#1F4E79",
-        "valign":     "vcenter",
-        "border":     0,
-    })
     cell_fmt = wb.add_format({
         "valign":     "top",
         "num_format": "@",
@@ -212,12 +205,23 @@ def main():
 
     ws.freeze_panes(1, 0)
 
+    # Write header row
     for col_idx, col_name in enumerate(columns):
-        ws.write_string(0, col_idx, col_name, hdr_fmt)
+        ws.write_string(0, col_idx, col_name, cell_fmt)
 
+    # Write data rows with fixed height (prevents multiline body_clean expanding rows)
     for row_idx, record in enumerate(records, start=1):
+        ws.set_row(row_idx, 15)
         for col_idx, col_name in enumerate(columns):
             ws.write_string(row_idx, col_idx, safe_str(record.get(col_name)), cell_fmt)
+
+    # Apply Excel Table formatting over the data range
+    table_cols = [{"header": col} for col in columns]
+    ws.add_table(0, 0, len(records), len(columns) - 1, {
+        "name":    "EmailData",
+        "style":   "Table Style Medium 2",
+        "columns": table_cols,
+    })
 
     print("  Setting column widths...")
     for col_idx, col_name in enumerate(columns):
