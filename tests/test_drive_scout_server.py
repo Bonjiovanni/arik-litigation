@@ -249,5 +249,200 @@ class TestScanSummary:
 
     def test_summary_contains_required_keys(self):
         result = dss.scan_summary(self._record())
-        for key in ("id", "paths", "scan_type", "status", "count", "elapsed"):
+        for key in ("id", "paths", "scan_type", "status", "count", "elapsed",
+                    "subdir_count", "file_count", "size_bytes"):
             assert key in result
+
+    def test_summary_subdir_count_defaults_to_zero(self):
+        result = dss.scan_summary(self._record())
+        assert result["subdir_count"] == 0
+
+    def test_summary_file_count_defaults_to_zero(self):
+        result = dss.scan_summary(self._record())
+        assert result["file_count"] == 0
+
+    def test_summary_size_bytes_defaults_to_zero(self):
+        result = dss.scan_summary(self._record())
+        assert result["size_bytes"] == 0
+
+
+# ---------------------------------------------------------------------------
+# TestSheetsConstants
+# ---------------------------------------------------------------------------
+class TestSheetsConstants:
+    def test_sheets_row_limit(self):
+        assert dss.SHEETS_ROW_LIMIT == 700_000
+
+    def test_sheets_header_fields(self):
+        assert dss.SHEETS_HEADER == [
+            "full_path", "directory", "filename", "extension",
+            "size_mb", "modified_date", "scanned_at",
+        ]
+
+    def test_sheets_header_first_field_is_sentinel(self):
+        assert dss.SHEETS_HEADER[0] == "full_path"
+
+
+# ---------------------------------------------------------------------------
+# TestSheetsHelpers  (all Google API calls are mocked)
+# ---------------------------------------------------------------------------
+class TestSheetsHelpers:
+    def _mock_svc(self):
+        from unittest.mock import MagicMock
+        return MagicMock()
+
+    # _get_existing_sheet_titles
+    def test_get_existing_sheet_titles_returns_list(self):
+        svc = self._mock_svc()
+        svc.spreadsheets().get().execute.return_value = {
+            "sheets": [
+                {"properties": {"title": "Sheet1"}},
+                {"properties": {"title": "Inventory1"}},
+            ]
+        }
+        result = dss._get_existing_sheet_titles(svc)
+        assert result == ["Sheet1", "Inventory1"]
+
+    def test_get_existing_sheet_titles_empty_spreadsheet(self):
+        svc = self._mock_svc()
+        svc.spreadsheets().get().execute.return_value = {"sheets": []}
+        result = dss._get_existing_sheet_titles(svc)
+        assert result == []
+
+    # _create_sheet_tab
+    def test_create_sheet_tab_calls_batch_update(self):
+        svc = self._mock_svc()
+        dss._create_sheet_tab(svc, "NewTab")
+        svc.spreadsheets().batchUpdate.assert_called_once()
+
+    def test_create_sheet_tab_correct_spreadsheet_id(self):
+        svc = self._mock_svc()
+        dss._create_sheet_tab(svc, "NewTab")
+        kwargs = svc.spreadsheets().batchUpdate.call_args.kwargs
+        assert kwargs["spreadsheetId"] == dss.SHEETS_ID
+
+    def test_create_sheet_tab_correct_title_in_body(self):
+        svc = self._mock_svc()
+        dss._create_sheet_tab(svc, "Inventory5")
+        kwargs = svc.spreadsheets().batchUpdate.call_args.kwargs
+        title = kwargs["body"]["requests"][0]["addSheet"]["properties"]["title"]
+        assert title == "Inventory5"
+
+    # _next_tab_name
+    def test_next_tab_name_empty_list_returns_inventory1(self):
+        assert dss._next_tab_name([]) == "Inventory1"
+
+    def test_next_tab_name_inventory1_exists_returns_inventory2(self):
+        assert dss._next_tab_name(["Inventory1"]) == "Inventory2"
+
+    def test_next_tab_name_sequential(self):
+        existing = ["Inventory1", "Inventory2"]
+        assert dss._next_tab_name(existing) == "Inventory3"
+
+    def test_next_tab_name_with_gap_fills_gap(self):
+        # Inventory1 and Inventory3 exist — should return Inventory2
+        existing = ["Inventory1", "Inventory3"]
+        assert dss._next_tab_name(existing) == "Inventory2"
+
+    def test_next_tab_name_non_inventory_sheets_ignored(self):
+        existing = ["Sheet1", "Data"]
+        assert dss._next_tab_name(existing) == "Inventory1"
+
+    # _tab_has_header
+    def test_tab_has_header_true_when_full_path_in_a1(self):
+        svc = self._mock_svc()
+        svc.spreadsheets().values().get().execute.return_value = {
+            "values": [["full_path"]]
+        }
+        assert dss._tab_has_header(svc, "Sheet1") is True
+
+    def test_tab_has_header_false_when_empty(self):
+        svc = self._mock_svc()
+        svc.spreadsheets().values().get().execute.return_value = {"values": []}
+        assert dss._tab_has_header(svc, "Sheet1") is False
+
+    def test_tab_has_header_false_when_different_value(self):
+        svc = self._mock_svc()
+        svc.spreadsheets().values().get().execute.return_value = {
+            "values": [["something_else"]]
+        }
+        assert dss._tab_has_header(svc, "Sheet1") is False
+
+    # _append_to_tab
+    def test_append_to_tab_calls_values_append(self):
+        svc = self._mock_svc()
+        dss._append_to_tab(svc, "Sheet1", [["row1col1", "row1col2"]])
+        svc.spreadsheets().values().append.assert_called_once()
+
+    def test_append_to_tab_correct_range(self):
+        svc = self._mock_svc()
+        dss._append_to_tab(svc, "MyTab", [["val"]])
+        kwargs = svc.spreadsheets().values().append.call_args.kwargs
+        assert kwargs["range"] == "MyTab!A1"
+
+    def test_append_to_tab_uses_raw_input_option(self):
+        svc = self._mock_svc()
+        dss._append_to_tab(svc, "Sheet1", [["val"]])
+        kwargs = svc.spreadsheets().values().append.call_args.kwargs
+        assert kwargs["valueInputOption"] == "RAW"
+
+    def test_append_to_tab_correct_body(self):
+        svc = self._mock_svc()
+        rows = [["a", "b"], ["c", "d"]]
+        dss._append_to_tab(svc, "Sheet1", rows)
+        kwargs = svc.spreadsheets().values().append.call_args.kwargs
+        assert kwargs["body"]["values"] == rows
+
+
+# ---------------------------------------------------------------------------
+# TestScanRouting  (verify deep-sheets/deep/dirs route to correct coroutine)
+# ---------------------------------------------------------------------------
+class TestScanRouting:
+    def _capture_coro_name(self, scan_type):
+        captured = []
+        def capture(coro):
+            captured.append(coro.__name__)
+            coro.close()
+        with patch("asyncio.create_task", side_effect=capture):
+            client.post("/api/scan/start",
+                        json={"paths": ["C:\\"], "scan_type": scan_type})
+        return captured
+
+    def test_deep_sheets_routes_to_run_scan_to_sheets(self):
+        names = self._capture_coro_name("deep-sheets")
+        assert names == ["run_scan_to_sheets"]
+
+    def test_deep_routes_to_run_scan(self):
+        names = self._capture_coro_name("deep")
+        assert names == ["run_scan"]
+
+    def test_dirs_routes_to_run_scan(self):
+        names = self._capture_coro_name("dirs")
+        assert names == ["run_scan"]
+
+    def test_files_routes_to_run_scan(self):
+        names = self._capture_coro_name("files")
+        assert names == ["run_scan"]
+
+
+# ---------------------------------------------------------------------------
+# TestOpenOutputDir
+# ---------------------------------------------------------------------------
+class TestOpenOutputDir:
+    def test_returns_ok_true(self):
+        with patch("subprocess.Popen"):
+            response = client.get("/api/open-output-dir")
+        assert response.status_code == 200
+        assert response.json()["ok"] is True
+
+    def test_calls_explorer(self):
+        with patch("subprocess.Popen") as mock_popen:
+            client.get("/api/open-output-dir")
+        args = mock_popen.call_args.args[0]
+        assert args[0] == "explorer"
+
+    def test_opens_output_dir_path(self):
+        with patch("subprocess.Popen") as mock_popen:
+            client.get("/api/open-output-dir")
+        args = mock_popen.call_args.args[0]
+        assert str(dss.OUTPUT_DIR) in args[1]

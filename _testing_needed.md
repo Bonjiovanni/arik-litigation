@@ -96,6 +96,30 @@ Delete this file and commit.
 
 ---
 
+## USER TODO — AppData review (before next full drive scan)
+
+`AppData` is currently in `SYSTEM_DIR_NAMES` and will be excluded from all scans.
+Review these locations manually — there may be litigation-relevant files buried here:
+
+- `C:\Users\arika\AppData\Local\Microsoft\Outlook\` — cached PST/OST email files
+- `C:\Users\arika\AppData\Roaming\Microsoft\` — Office recent files, templates
+- `C:\Users\arika\AppData\Local\Google\Chrome\User Data\Default\` — browser history/downloads index
+- `C:\Users\arika\AppData\Roaming\Aid4Mail\` — if Aid4Mail stores anything here
+- Any cloud sync client state (OneDrive, Dropbox) under AppData
+
+**To scan a specific AppData subfolder:** right-click it in Drive Scout tree → Deep Scan → Sheets
+(it will work even though the parent AppData is excluded from bulk scans)
+
+---
+
+## NEW — 2026-03-23 — drive_scout_server.py major changes — DONE ✓
+
+29 new tests added to `tests/test_drive_scout_server.py` (now 63 tests):
+TestSheetsConstants, TestSheetsHelpers (all API calls mocked), TestScanRouting
+(coroutine name inspection), TestOpenOutputDir. Suite: **958 tests passing**.
+
+---
+
 ## NEW — 2026-03-21 — Drive Scout + fw_dir_tree + fw_file_inventory — DONE ✓
 
 90 tests written and passing across 3 files:
