@@ -1,5 +1,9 @@
 credentials.json
 token.json
+*credentials*.json
+*secret*.json
+token_*.json
+drive_scout_output/
 file_metadata_*.xlsx
 __pycache__/
 *.pyc
