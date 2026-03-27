@@ -2,7 +2,7 @@ import os
 import tempfile
 import numpy as np
 import pytest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 
 def test_cosine_similarity_identical():

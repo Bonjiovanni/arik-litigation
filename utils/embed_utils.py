@@ -22,10 +22,12 @@ def cosine_similarity(a: np.ndarray, b: np.ndarray) -> float:
 
 
 def save_embedding(embedding: np.ndarray, path: str) -> None:
-    """Save a numpy embedding array to a .npy file."""
+    """Save a numpy embedding array to a .npy file. Path must include the .npy extension."""
+    if not path.endswith(".npy"):
+        raise ValueError(f"path must end with .npy, got: {path!r}")
     np.save(path, embedding)
 
 
 def load_embedding(path: str) -> np.ndarray:
     """Load a numpy embedding array from a .npy file."""
-    return np.load(path)
+    return np.load(path, allow_pickle=False)
