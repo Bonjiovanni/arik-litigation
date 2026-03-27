@@ -18,7 +18,7 @@ def make_temp_profiles_dir():
 
 
 FAKE_AUDIO_15S = np.zeros(16000 * 15, dtype=np.float32)
-FAKE_EMBEDDING = np.random.rand(256).astype(np.float32)
+FAKE_EMBEDDING = np.ones(256, dtype=np.float32)
 
 
 def test_enroll_from_clip_creates_profile():
@@ -59,6 +59,18 @@ def test_enroll_rejects_short_clip():
              patch.object(enroll, "MIN_ENROLLMENT_SEC", 12.0):
             with pytest.raises(ValueError, match="too short"):
                 enroll_speaker(name="Carol", clip_path="carol.m4a")
+    finally:
+        shutil.rmtree(profiles_dir)
+
+
+def test_enroll_rejects_short_timestamp_segment():
+    profiles_dir = make_temp_profiles_dir()
+    try:
+        with patch.object(enroll, "extract_segment", return_value=np.zeros(16000 * 5, dtype=np.float32)), \
+             patch.object(enroll, "PROFILES_DIR", profiles_dir), \
+             patch.object(enroll, "MIN_ENROLLMENT_SEC", 12.0):
+            with pytest.raises(ValueError, match="too short"):
+                enroll_speaker(name="Eve", file_path="meeting.m4a", start="0:10", end="0:15")
     finally:
         shutil.rmtree(profiles_dir)
 
