@@ -112,8 +112,8 @@ def run_pipeline(filepath: str) -> None:
         key = (utt.speaker, utt.end)
         if key in interrupted_keys:
             utt_words = [
-                words[i] for i, w in enumerate(transcript.words)
-                if w.start >= utt.start and w.end <= utt.end
+                norm for norm, raw in zip(words, transcript.words)
+                if raw.start >= utt.start and raw.end <= utt.end
             ]
             if utt_words:
                 utt_words[-1]["word"] = utt_words[-1]["word"].rstrip() + "--"

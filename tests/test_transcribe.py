@@ -77,6 +77,6 @@ def test_pipeline_produces_srt_and_json(tmp_path):
     assert any(f.endswith(".json") for f in output_files), "JSON file not created"
 
     srt_path = next(f for f in output_files if f.endswith(".srt"))
-    with open(os.path.join(output_dir, srt_path)) as f:
+    with open(os.path.join(output_dir, srt_path), encoding="utf-8") as f:
         srt_content = f.read()
     assert "David:" in srt_content or "Sarah:" in srt_content
