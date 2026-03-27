@@ -1,0 +1,12 @@
+assemblyai>=0.29.0
+# resemblyzer requires webrtcvad which needs C++ Build Tools on Windows.
+# Install order matters: run these two commands instead of plain pip install -r requirements.txt:
+#   pip install webrtcvad-wheels
+#   pip install -r requirements.txt --no-build-isolation
+# OR:
+#   pip install assemblyai librosa numpy pytest torch scipy
+#   pip install resemblyzer --no-deps
+resemblyzer>=0.1.1.dev0
+librosa>=0.10.0
+numpy>=1.24.0
+pytest>=7.4.0
