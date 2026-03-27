@@ -1,3 +1,4 @@
+"""Utilities for loading and processing audio files."""
 import numpy as np
 import librosa
 
@@ -12,7 +13,7 @@ def parse_timestamp(ts_str: str) -> float:
     raise ValueError(f"Cannot parse timestamp: {ts_str!r}")
 
 
-def load_audio(filepath: str, sr: int = 16000) -> tuple:
+def load_audio(filepath: str, sr: int = 16000) -> tuple[np.ndarray, int]:
     """Load audio file as 16kHz mono numpy array. Returns (audio_array, sample_rate)."""
     audio, sr_out = librosa.load(filepath, sr=sr, mono=True)
     return audio, sr_out
