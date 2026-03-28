@@ -19,16 +19,32 @@ MAX_SPEAKERS = 4
 # per AssemblyAI docs by introducing a small amount of decoding exploration.
 TRANSCRIPTION_TEMPERATURE = 0.1
 
-# Names passed to AssemblyAI to boost recognition accuracy (Universal-3 Pro keyterms).
-# "Arik" and "Jeanne" have non-obvious spellings; all four names are included so the
-# model hears them reliably and doesn't confuse them with common homophones.
-KEYTERMS: list[str] = ["Arik", "Jeanne", "Bob", "Matt"]
-
-# Custom spelling corrections: maps phonetic mishearings → correct spelling in output.
-# "to" must be a single word. "from" is case-insensitive.
-# Arik: model may default to common spellings Eric/Erik
-# Jeanne: model may default to Jean/Gene (single-n variants)
-CUSTOM_SPELLING: list[dict] = [
-    {"from": ["eric", "erik", "aric", "erick"], "to": "Arik"},
-    {"from": ["jean", "gene", "jen", "jan", "jeannie", "jeane"], "to": "Jeanne"},
-]
+# U3 Pro transcription prompt. Mutually exclusive with KEYTERMS — do not set both.
+# Priority: accurate word capture and correct speaker attribution, especially during
+# overlapping speech. [CROSSTALK] and [masked] are last resorts only.
+# Recording context: one speaker (Arik) is consistently close to the mic; all others
+# are ambient and will sound softer — this is a mic distance issue, not unclear speech.
+TRANSCRIPTION_PROMPT: str = (
+    "Always: Transcribe speech exactly as heard. "
+    "Accuracy is the top priority — work hard to capture every word correctly, "
+    "including during overlapping or difficult speech. "
+    "After transcribing, review for hallucinations or errors and revise."
+    "\n\n"
+    "When two speakers talk simultaneously, attempt to transcribe and attribute "
+    "each speaker's words separately. "
+    "Only use [CROSSTALK] when overlapping speech is genuinely indistinguishable "
+    "after your best effort — it is a last resort, not a default."
+    "\n\n"
+    "If a word or phrase remains truly unclear after your best attempt, "
+    "mark it as [masked] rather than guessing."
+    "\n\n"
+    "One speaker is consistently closer to the microphone and will sound louder "
+    "throughout. Other speakers are more distant and will sound softer. "
+    "Treat volume differences as a recording condition, not as unclear speech — "
+    "transcribe all speakers with equal effort regardless of volume."
+    "\n\n"
+    "Preserve meaningful speech patterns: include false starts (I was— I went), "
+    "self-corrections, and restarts as spoken. "
+    "Capture significant hesitations where they affect meaning or pacing. "
+    "You do not need to capture every filler word."
+)

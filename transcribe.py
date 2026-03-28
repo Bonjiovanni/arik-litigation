@@ -78,8 +78,7 @@ def run_pipeline(filepath: str) -> None:
             max_speakers_expected=config.MAX_SPEAKERS,
         ),
         temperature=config.TRANSCRIPTION_TEMPERATURE,
-        **({"keyterms_prompt": config.KEYTERMS} if config.KEYTERMS else {}),
-        **({"custom_spelling": config.CUSTOM_SPELLING} if config.CUSTOM_SPELLING else {}),
+        prompt=config.TRANSCRIPTION_PROMPT,
     )
     transcript = transcriber.transcribe(filepath, config=aai_config)
 
@@ -108,17 +107,19 @@ def run_pipeline(filepath: str) -> None:
     overlapping_indices = _detect_overlaps(transcript.words)
     interrupted_keys = _detect_interruptions(transcript.utterances)
 
-    # Build normalized word dicts
+    # Build normalized word dicts.
+    # U3 Pro may emit "[CROSSTALK]" as a word token when prompted — treat it as overlap.
     words = []
     for i, w in enumerate(transcript.words):
         resolved = label_map.get(w.speaker, "Unknown")
+        native_crosstalk = w.text == "[CROSSTALK]"
         words.append({
             "word": w.text,
             "start_ms": w.start,
             "end_ms": w.end,
             "speaker": resolved,
             "confidence": w.confidence if w.confidence is not None else 0.5,
-            "overlap": i in overlapping_indices,
+            "overlap": native_crosstalk or i in overlapping_indices,
         })
 
     # Mark interruptions: append -- to last word of interrupted utterances
