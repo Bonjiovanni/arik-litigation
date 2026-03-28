@@ -30,7 +30,10 @@ def _get_longest_utterance(utterances, speaker_label):
 
 
 def _detect_overlaps(words) -> set:
-    """Return indices of words whose time ranges intersect with a different speaker's word."""
+    """Return indices of words whose time ranges intersect with a different speaker's word.
+
+    Note: AssemblyAI word objects have no native overlap field — this detection is intentional.
+    """
     overlapping = set()
     for i, w1 in enumerate(words):
         for j, w2 in enumerate(words):
@@ -66,10 +69,16 @@ def run_pipeline(filepath: str) -> None:
     aai.settings.api_key = config.ASSEMBLYAI_API_KEY
 
     transcriber = aai.Transcriber()
-    aai_config = aai.TranscriptionConfig(speaker_labels=True)
+    aai_config = aai.TranscriptionConfig(
+        speaker_labels=True,
+        language_code="en",
+        speech_models=[aai.SpeechModel.universal_3_pro, aai.SpeechModel.universal_2],
+        **({"keyterms_prompt": config.KEYTERMS} if config.KEYTERMS else {}),
+        **({"custom_spelling": config.CUSTOM_SPELLING} if config.CUSTOM_SPELLING else {}),
+    )
     transcript = transcriber.transcribe(filepath, config=aai_config)
 
-    if transcript.error:
+    if transcript.status == aai.TranscriptStatus.error:
         print(f"Transcription failed: {transcript.error}", file=sys.stderr)
         sys.exit(1)
 
@@ -103,7 +112,7 @@ def run_pipeline(filepath: str) -> None:
             "start_ms": w.start,
             "end_ms": w.end,
             "speaker": resolved,
-            "confidence": w.confidence if w.confidence is not None else 1.0,
+            "confidence": w.confidence if w.confidence is not None else 0.5,
             "overlap": i in overlapping_indices,
         })
 

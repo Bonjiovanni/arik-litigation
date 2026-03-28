@@ -9,3 +9,15 @@ INAUDIBLE_CONFIDENCE = 0.20     # words at or below this → [inaudible]
 PHONETIC_CONFIDENCE = 0.50      # words at or below this → [phonetic: word]
 INTERRUPT_GAP_MS = 200          # gap < this between speakers → interruption (--)
 MIN_ENROLLMENT_SEC = 12.0       # minimum reference audio for enrollment
+
+# Names and terms passed to AssemblyAI to boost recognition accuracy (Universal-3 Pro).
+# Add names with unusual spellings or pronunciations. The model will hear these more reliably.
+# Example: ["Arika", "Devraj", "Saoirse"]
+KEYTERMS: list[str] = []
+
+# Custom spelling corrections applied to AssemblyAI output text.
+# Use when the model transcribes a name phonetically but spells it wrong.
+# Each entry: {"from": ["phonetic spelling", "alternate"], "to": "CorrectSpelling"}
+# "to" must be a single word. "from" is case-insensitive.
+# Example: [{"from": ["erica", "africa"], "to": "Arika"}]
+CUSTOM_SPELLING: list[dict] = []
