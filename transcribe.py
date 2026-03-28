@@ -73,6 +73,11 @@ def run_pipeline(filepath: str) -> None:
         speaker_labels=True,
         language_code="en",
         speech_models=[aai.SpeechModel.universal_3_pro, aai.SpeechModel.universal_2],
+        speaker_options=aai.SpeakerOptions(
+            min_speakers_expected=config.MIN_SPEAKERS,
+            max_speakers_expected=config.MAX_SPEAKERS,
+        ),
+        temperature=config.TRANSCRIPTION_TEMPERATURE,
         **({"keyterms_prompt": config.KEYTERMS} if config.KEYTERMS else {}),
         **({"custom_spelling": config.CUSTOM_SPELLING} if config.CUSTOM_SPELLING else {}),
     )
