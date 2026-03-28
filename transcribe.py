@@ -72,7 +72,7 @@ def run_pipeline(filepath: str) -> None:
     aai_config = aai.TranscriptionConfig(
         speaker_labels=True,
         language_code="en",
-        speech_models=[aai.SpeechModel.universal_3_pro, aai.SpeechModel.universal_2],
+        speech_models=["universal-3-pro", "universal-2"],
         speaker_options=aai.SpeakerOptions(
             min_speakers_expected=config.MIN_SPEAKERS,
             max_speakers_expected=config.MAX_SPEAKERS,
@@ -145,7 +145,7 @@ def run_pipeline(filepath: str) -> None:
     srt_path = os.path.join(OUTPUT_DIR, f"{stem}.srt")
     with open(srt_path, "w", encoding="utf-8") as f:
         f.write(srt_content)
-    print(f"SRT written  → {srt_path}")
+    print(f"SRT written  -> {srt_path}")
 
     # audio_duration from AssemblyAI is in seconds — convert to ms for build_json_output
     duration_ms = int((transcript.audio_duration or 0) * 1000)
@@ -161,7 +161,7 @@ def run_pipeline(filepath: str) -> None:
     json_path = os.path.join(OUTPUT_DIR, f"{stem}.json")
     with open(json_path, "w", encoding="utf-8") as f:
         json.dump(json_data, f, indent=2, ensure_ascii=False)
-    print(f"JSON written → {json_path}")
+    print(f"JSON written -> {json_path}")
 
 
 def main():

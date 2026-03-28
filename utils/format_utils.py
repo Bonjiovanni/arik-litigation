@@ -20,6 +20,9 @@ def apply_word_marker(
         raise ValueError(
             f"inaudible_threshold ({inaudible_threshold}) must be <= phonetic_threshold ({phonetic_threshold})"
         )
+    # Special tokens emitted by the model (e.g. [CROSSTALK], [Speaker]) — pass through unchanged.
+    if word.startswith("[") and word.endswith("]"):
+        return word
     if confidence <= inaudible_threshold:
         return "[inaudible]"
     if confidence <= phonetic_threshold:

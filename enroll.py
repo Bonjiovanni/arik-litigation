@@ -61,7 +61,7 @@ def enroll_speaker(
     with open(index_path, "w") as f:
         json.dump(index, f, indent=2)
 
-    print(f"Enrolled '{name}' → {npy_path}")
+    print(f"Enrolled '{name}' -> {npy_path}")
 
 
 def main():

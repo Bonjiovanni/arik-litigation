@@ -23,15 +23,28 @@ def test_parse_timestamp_invalid():
 
 def test_load_audio_uses_16k_mono():
     fake_audio = np.zeros(16000, dtype=np.float32)
-    with patch("utils.audio_utils.librosa.load", return_value=(fake_audio, 16000)) as mock_load:
+    with patch("utils.audio_utils._convert_to_wav", return_value="fake_converted.wav") as mock_conv, \
+         patch("utils.audio_utils.librosa.load", return_value=(fake_audio, 16000)) as mock_load, \
+         patch("utils.audio_utils.os.unlink"):
         audio, sr = load_audio("fake.m4a")
-    mock_load.assert_called_once_with("fake.m4a", sr=16000, mono=True)
+    mock_conv.assert_called_once_with("fake.m4a")
+    mock_load.assert_called_once_with("fake_converted.wav", sr=16000, mono=True)
+    assert sr == 16000
+
+
+def test_load_audio_native_format_skips_conversion():
+    fake_audio = np.zeros(16000, dtype=np.float32)
+    with patch("utils.audio_utils.librosa.load", return_value=(fake_audio, 16000)) as mock_load:
+        audio, sr = load_audio("fake.wav")
+    mock_load.assert_called_once_with("fake.wav", sr=16000, mono=True)
     assert sr == 16000
 
 
 def test_extract_segment_correct_length():
     sr = 16000
     full_audio = np.zeros(sr * 60, dtype=np.float32)  # 60 seconds
-    with patch("utils.audio_utils.librosa.load", return_value=(full_audio, sr)):
+    with patch("utils.audio_utils._convert_to_wav", return_value="fake_converted.wav"), \
+         patch("utils.audio_utils.librosa.load", return_value=(full_audio, sr)), \
+         patch("utils.audio_utils.os.unlink"):
         segment = extract_segment("fake.m4a", 10.0, 20.0, sr=sr)
     assert len(segment) == sr * 10

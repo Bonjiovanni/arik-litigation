@@ -1,0 +1,191 @@
+================================================================================
+TASK 6: OUTPUT FORMATTING UTILITIES — STATUS REPORT
+================================================================================
+Date: 2026-03-27
+Project: Audio Transcription Pipeline
+Status: COMPLETE ✓
+
+================================================================================
+DELIVERABLES
+================================================================================
+
+[✓] COMPLETE - utils/format_utils.py (146 lines)
+    └─ 5 functions implemented:
+       • ms_to_srt_time(ms) — milliseconds to SRT timestamp
+       • apply_word_marker(...) — confidence-based legal markers
+       • group_words_into_blocks(...) — SRT block grouping
+       • render_srt(...) — SRT string generation
+       • build_json_output(...) — JSON output structure
+
+[✓] COMPLETE - tests/test_format_utils.py (126 lines)
+    └─ 13 test functions implemented
+       • 3 tests for ms_to_srt_time
+       • 3 tests for apply_word_marker
+       • 3 tests for group_words_into_blocks
+       • 2 tests for render_srt (basic + crosstalk)
+       • 1 test for render_srt pause marker
+       • 1 test for build_json_output
+
+================================================================================
+TEST RESULTS
+================================================================================
+
+Format Utils Tests (test_format_utils.py):      13/13 PASSED ✓
+Full Test Suite:                                38/38 PASSED ✓
+  • test_audio_utils.py        6 tests
+  • test_embed_utils.py        6 tests
+  • test_enroll.py             6 tests
+  • test_speaker_match.py      7 tests
+  • test_format_utils.py      13 tests (NEW)
+  ────────────────────────────────────────
+  Total                       38 tests
+
+Expected (per task description):
+  • Existing tests             25 tests (6+6+6+7)
+  • New tests (Task 6)         13 tests
+  • Total                      38 tests ✓
+
+================================================================================
+IMPLEMENTATION DETAILS
+================================================================================
+
+Module: utils/format_utils.py
+
+Function 1: ms_to_srt_time(ms: int) -> str
+  Input:  Milliseconds (integer)
+  Output: SRT timestamp string "HH:MM:SS,mmm"
+  Tests:  3 (basic, over 1 hour, zero edge case)
+
+Function 2: apply_word_marker(word, confidence, inaudible_threshold, phonetic_threshold)
+  Input:  Word text, confidence score, two thresholds
+  Output: Marked word or special marker
+  Logic:
+    - If confidence ≤ inaudible_threshold → "[inaudible]"
+    - Else if confidence ≤ phonetic_threshold → "[phonetic: word]"
+    - Else → word unchanged
+  Tests:  3 (inaudible, phonetic, normal)
+
+Function 3: group_words_into_blocks(words, pause_threshold_sec) -> (blocks, reasons)
+  Input:  List of word dicts, pause threshold in seconds
+  Output: List of word blocks, list of break reasons
+  Logic:
+    - Creates new block on speaker change
+    - Creates new block on pause ≥ threshold
+    - Otherwise appends to current block
+  Tests:  3 (pause break, speaker change, no break)
+
+Function 4: render_srt(blocks, reasons, inaudible_threshold, phonetic_threshold) -> str
+  Input:  Blocks of words, break reasons, two confidence thresholds
+  Output: SRT subtitle string
+  Format:
+    1
+    00:00:08,100 --> 00:00:09,000
+    Speaker: word word word [markers] [pause]
+
+    2
+    ...
+  Features:
+    - Block numbering (1-indexed)
+    - Speaker name capitalized
+    - Applies word markers via apply_word_marker()
+    - [crosstalk] prefix if block has overlapping words
+    - [pause] appended if same speaker continues after pause
+  Tests:  3 (basic format, crosstalk prefix, pause marker)
+
+Function 5: build_json_output(filename, duration_ms, label_map, words, conflicts, thresholds...)
+  Input:  Metadata, speaker mapping, word list, conflict flags, thresholds
+  Output: Dict with complete JSON structure
+  Fields:
+    - file: filename
+    - duration_seconds: duration in seconds (rounded to 3 decimals)
+    - speakers_identified: sorted list of identified speakers
+    - speakers_unknown: count of "Unknown" speakers
+    - flags: conflict list
+    - words: array of word records with marked text, timing, speaker, confidence, overlap
+  Tests:  1 (structure verification)
+
+================================================================================
+WORD DATA STRUCTURE
+================================================================================
+
+Input to format_utils functions:
+
+    {
+        "word": str,         # Raw text from AssemblyAI
+        "start_ms": int,     # Start time in milliseconds
+        "end_ms": int,       # End time in milliseconds
+        "speaker": str,      # Resolved name ("david", "Unknown", etc.)
+        "confidence": float, # 0.0–1.0 (from AssemblyAI)
+        "overlap": bool,     # True if overlaps with different speaker
+    }
+
+Configuration (from config.py):
+
+    SRT_PAUSE_THRESHOLD_SEC = 1.5   # seconds of silence to break block
+    INAUDIBLE_CONFIDENCE = 0.20     # words at or below → [inaudible]
+    PHONETIC_CONFIDENCE = 0.50      # words at or below → [phonetic: word]
+
+================================================================================
+READY FOR COMMIT
+================================================================================
+
+Files to commit:
+  • utils/format_utils.py
+  • tests/test_format_utils.py
+
+Commit message:
+  git commit -m "feat: output formatting — SRT blocks, legal markers, pause detection, JSON"
+
+Expected commit hash: (will be generated on commit)
+
+================================================================================
+VERIFICATION CHECKLIST
+================================================================================
+
+[✓] File exists: utils/format_utils.py
+[✓] File exists: tests/test_format_utils.py
+[✓] Function: ms_to_srt_time imported
+[✓] Function: apply_word_marker imported
+[✓] Function: group_words_into_blocks imported
+[✓] Function: render_srt imported
+[✓] Function: build_json_output imported
+[✓] Test: test_ms_to_srt_time_basic passes
+[✓] Test: test_ms_to_srt_time_over_one_hour passes
+[✓] Test: test_ms_to_srt_time_zero passes
+[✓] Test: test_apply_word_marker_inaudible passes
+[✓] Test: test_apply_word_marker_phonetic passes
+[✓] Test: test_apply_word_marker_normal passes
+[✓] Test: test_group_words_pause_breaks_block passes
+[✓] Test: test_group_words_speaker_change_breaks_block passes
+[✓] Test: test_group_words_no_break_within_speaker passes
+[✓] Test: test_render_srt_basic_format passes
+[✓] Test: test_render_srt_crosstalk_prefix passes
+[✓] Test: test_render_srt_pause_marker passes
+[✓] Test: test_build_json_output_structure passes
+[✓] No regressions in existing test suites (25 tests still passing)
+
+================================================================================
+SUMMARY
+================================================================================
+
+Task 6 implementation is COMPLETE and VERIFIED.
+
+All deliverables are in place:
+  • 146-line implementation module with 5 functions
+  • 126-line test module with 13 comprehensive tests
+  • All tests passing (13/13 format_utils, 38/38 full suite)
+  • No regressions
+  • Code ready for production
+
+The module converts word-level transcripts (with speaker labels, confidence
+scores, and timing) into SRT and JSON formats ready for import into Descript
+for final manual corrections. Key features include:
+
+  • SRT block grouping by speaker and pause detection
+  • Confidence-based legal transcription markers
+  • Crosstalk and pause annotations
+  • Complete JSON output structure
+
+Status: READY FOR COMMIT
+
+================================================================================
