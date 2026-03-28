@@ -19,14 +19,16 @@ MAX_SPEAKERS = 4
 # per AssemblyAI docs by introducing a small amount of decoding exploration.
 TRANSCRIPTION_TEMPERATURE = 0.1
 
-# Names and terms passed to AssemblyAI to boost recognition accuracy (Universal-3 Pro).
-# Add names with unusual spellings or pronunciations. The model will hear these more reliably.
-# Example: ["Arika", "Devraj", "Saoirse"]
-KEYTERMS: list[str] = []
+# Names passed to AssemblyAI to boost recognition accuracy (Universal-3 Pro keyterms).
+# "Arik" and "Jeanne" have non-obvious spellings; all four names are included so the
+# model hears them reliably and doesn't confuse them with common homophones.
+KEYTERMS: list[str] = ["Arik", "Jeanne", "Bob", "Matt"]
 
-# Custom spelling corrections applied to AssemblyAI output text.
-# Use when the model transcribes a name phonetically but spells it wrong.
-# Each entry: {"from": ["phonetic spelling", "alternate"], "to": "CorrectSpelling"}
+# Custom spelling corrections: maps phonetic mishearings → correct spelling in output.
 # "to" must be a single word. "from" is case-insensitive.
-# Example: [{"from": ["erica", "africa"], "to": "Arika"}]
-CUSTOM_SPELLING: list[dict] = []
+# Arik: model may default to common spellings Eric/Erik
+# Jeanne: model may default to Jean/Gene (single-n variants)
+CUSTOM_SPELLING: list[dict] = [
+    {"from": ["eric", "erik", "aric", "erick"], "to": "Arik"},
+    {"from": ["jean", "gene", "jen", "jan", "jeannie", "jeane"], "to": "Jeanne"},
+]
