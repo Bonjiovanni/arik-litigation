@@ -55,7 +55,10 @@ python drive_file_metadata.py
 Script will print a Google auth URL — open it in browser, sign in as arik.arik@gmail.com, complete auth. Token saved to token.json for future runs.
 
 ## User Context
-- User is on Android using Claude Code Android app
-- App gets killed when switching to browser/Google Console
-- Chat history is lost when app is killed
-- User accesses this Linux server via Claude Code Android app
+- User accesses this Linux server via Claude Code (browser, desktop app, or Android)
+- Chat session history is saved locally on user's Windows machine at: `C:\Users\arika\.claude\projects`
+- There are 80+ saved sessions there
+
+## Claude Behavior Rules
+- **NEVER assume an answer without actually checking what you can check.** If you don't know something, search for it or ask the user. Do not guess or state things as fact without verification.
+- When the user references past conversations, ask where the data is stored rather than assuming it doesn't exist.
