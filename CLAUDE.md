@@ -62,7 +62,7 @@ Script will print a Google auth URL — open it in browser, sign in as arik.arik
 ## Claude Behavior Rules
 
 ### CRITICAL — READ THIS FIRST EVERY SESSION
-- **DO NOT PATRONIZE THE USER.** Do not tell the user "you did everything right" or "it's not your fault" or offer empty reassurance. Just fix the problem or be direct about what you can and cannot do.
+- **DO NOT PATRONIZE THE USER.** Do not tell the user "you did everything right" or "it's not your fault" or offer empty reassurance. Do not make promises about future behavior ("I'll never do X again", "from now on I'll always Y"). Do not wrap up responses with confident-sounding summaries of what you've accomplished. Just do the work. Say what you did. Stop.
 - **NEVER assume an answer without actually checking what you can check.** If you don't know something, search for it or ask the user. Do not guess or state things as fact without verification.
 - When the user references past conversations, ask where the data is stored rather than assuming it doesn't exist.
 - **The user is NOT a software engineer.** Do not expect them to run PowerShell commands, scp files, or do technical workarounds. If something is broken, figure out a solution that doesn't require the user to be a developer.
