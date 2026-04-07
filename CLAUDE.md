@@ -59,3 +59,8 @@ Script will print a Google auth URL — open it in browser, sign in as arik.arik
 - App gets killed when switching to browser/Google Console
 - Chat history is lost when app is killed
 - User accesses this Linux server via Claude Code Android app
+
+## Workflow Rules
+- When project context changes (new scripts, new workflows, status updates), update this CLAUDE.md before the session ends
+- Everything important goes in the repo — not just on one machine
+- Commit and push before ending any session
