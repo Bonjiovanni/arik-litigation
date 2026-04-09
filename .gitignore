@@ -20,3 +20,11 @@ email_pipeline/*.json
 
 # Working output / data artifacts — keep locally, never commit
 output/
+
+# Database files — large, live in Litigation\Pipeline
+*.db
+
+# Audio pipeline artifacts
+audio_pipeline/.pytest_cache/
+audio_pipeline/speakers/
+audio_pipeline/transcripts/
