@@ -1,0 +1,190 @@
+C:\Users\arika\OneDrive\ArikLegalTools\my_chat_app.py
+C:\Users\arika\OneDrive\CLaude Cowork\find_macros.py
+C:\Users\arika\OneDrive\CLaude Cowork\pdf_package_builder.py
+C:\Users\arika\OneDrive\Code\Google voice parser\google-voice-takeout-parser-main\src\google_voice_takeout_parser\__init__.py
+C:\Users\arika\OneDrive\Code\Google voice parser\google-voice-takeout-parser-main\src\google_voice_takeout_parser\_version.py
+C:\Users\arika\OneDrive\Code\Google voice parser\google-voice-takeout-parser-main\src\google_voice_takeout_parser\google_voice_takeout_parser.py
+C:\Users\arika\OneDrive\Documents\Aid4Mail\attachment_manifest.flt.py
+C:\Users\arika\OneDrive\Documents\Aid4Mail\attachment_manifest_clean_v2.flt.py
+C:\Users\arika\OneDrive\Documents\Aid4Mail\attachment_manifest_clean_v5_spool_local_finalize_onedrive.flt.py
+C:\Users\arika\OneDrive\Documents\Aid4Mail\attachment_manifest_clean_v9_restore_v2_behavior_spool_finalize.flt.py
+C:\Users\arika\OneDrive\Documents\Aid4Mail\attachment_manifest_clean_v9_restore_v2_behavior_spool_finalize_V2.flt.py
+C:\Users\arika\OneDrive\Documents\Aid4Mail\attachment_manifest_compat.flt.py
+C:\Users\arika\OneDrive\Documents\Aid4Mail\attachment_manifest_v10_namematch.flt.py
+C:\Users\arika\OneDrive\Documents\Aid4Mail\attachment_manifest_v11_copy.flt.py
+C:\Users\arika\OneDrive\Documents\Aid4Mail\attachment_manifest_v12_fix_dedup.flt.py
+C:\Users\arika\OneDrive\Documents\Aid4Mail\attachment_manifest_v13-rev2_multirun.flt.py
+C:\Users\arika\OneDrive\Documents\Aid4Mail\attachment_manifest_v13-rev3_multirun.flt.py
+C:\Users\arika\OneDrive\Documents\Aid4Mail\attachment_manifest_v13-rev4_multirun.flt.py
+C:\Users\arika\OneDrive\Documents\Aid4Mail\attachment_manifest_v13-rev_multirun.flt.py
+C:\Users\arika\OneDrive\Documents\Aid4Mail\attachment_manifest_v13_multirun.flt.py
+C:\Users\arika\OneDrive\Documents\Aid4Mail\attachment_manifest_v14_multirun.flt.py
+C:\Users\arika\OneDrive\Documents\Aid4Mail\attachment_manifest_v15_multirun.flt.py
+C:\Users\arika\OneDrive\Documents\Bounty Calcs\process_clipboard_image.py
+C:\Users\arika\OneDrive\Documents\EmailResearchApp\email-research-app\backend\app.py
+C:\Users\arika\OneDrive\Documents\EmailResearchApp\email-research-app\backend\config.py
+C:\Users\arika\OneDrive\Documents\EmailResearchApp\email-research-app\backend\config_store.py
+C:\Users\arika\OneDrive\Documents\EmailResearchApp\email-research-app\backend\core\converter_office.py
+C:\Users\arika\OneDrive\Documents\EmailResearchApp\email-research-app\backend\core\indexer.py
+C:\Users\arika\OneDrive\Documents\EmailResearchApp\email-research-app\backend\core\ingest_gmail.py
+C:\Users\arika\OneDrive\Documents\EmailResearchApp\email-research-app\backend\core\ingest_outlook.py
+C:\Users\arika\OneDrive\Documents\EmailResearchApp\email-research-app\backend\core\ocr.py
+C:\Users\arika\OneDrive\Documents\EmailResearchApp\email-research-app\backend\core\pdf_builder.py
+C:\Users\arika\OneDrive\Documents\EmailResearchApp\email-research-app\backend\core\utils.py
+C:\Users\arika\OneDrive\Documents\EmailResearchApp\email-research-app\backend\db.py
+C:\Users\arika\OneDrive\Documents\EmailResearchApp\email-research-app\backend\models.py
+C:\Users\arika\OneDrive\Documents\EmailResearchApp\email-research-app\backend\routers\export.py
+C:\Users\arika\OneDrive\Documents\EmailResearchApp\email-research-app\backend\routers\highlight.py
+C:\Users\arika\OneDrive\Documents\EmailResearchApp\email-research-app\backend\routers\search.py
+C:\Users\arika\OneDrive\Documents\EmailResearchApp\email-research-app\backend\routers\settings.py
+C:\Users\arika\OneDrive\Documents\EmailResearchApp\email-research-app\backend\routers\setup.py
+C:\Users\arika\OneDrive\Litigation Automation\Legal_Research_Agent_v1.0\config_template.py
+C:\Users\arika\OneDrive\Litigation Automation\Legal_Research_Agent_v1.0\legal_research_agent\__init__.py
+C:\Users\arika\OneDrive\Litigation Automation\Legal_Research_Agent_v1.0\legal_research_agent\cloud\google_drive_client.py
+C:\Users\arika\OneDrive\Litigation Automation\Legal_Research_Agent_v1.0\legal_research_agent\cloud\onedrive_client.py
+C:\Users\arika\OneDrive\Litigation Automation\Legal_Research_Agent_v1.0\legal_research_agent\consolidation\evidence_manager.py
+C:\Users\arika\OneDrive\Litigation Automation\Legal_Research_Agent_v1.0\legal_research_agent\core\agent.py
+C:\Users\arika\OneDrive\Litigation Automation\Legal_Research_Agent_v1.0\legal_research_agent\core\config.py
+C:\Users\arika\OneDrive\Litigation Automation\Legal_Research_Agent_v1.0\legal_research_agent\discovery\discovery_engine.py
+C:\Users\arika\OneDrive\Litigation Automation\Legal_Research_Agent_v1.0\legal_research_agent\main.py
+C:\Users\arika\OneDrive\Litigation Automation\Legal_Research_Agent_v1.0\legal_research_agent\search\hybrid_search.py
+C:\Users\arika\OneDrive\Litigation Automation\Legal_Research_Agent_v1.0\legal_research_agent\utils\content_extractor.py
+C:\Users\arika\OneDrive\Litigation Automation\Legal_Research_Agent_v1.0\legal_research_agent\utils\file_processor.py
+C:\Users\arika\OneDrive\Litigation Automation\Legal_Research_Agent_v1.0\legal_research_agent\web\__init__.py
+C:\Users\arika\OneDrive\Litigation Automation\Legal_Research_Agent_v1.0\legal_research_agent\web\app.py
+C:\Users\arika\OneDrive\Litigation Automation\Legal_Research_Agent_v1.0\legal_research_agent\web\routes.py
+C:\Users\arika\OneDrive\Litigation Automation\Microsoft Onedrive Agent\DOcumentation\OneDrive_Legal_Agent_v1.0\config.py
+C:\Users\arika\OneDrive\Litigation Automation\Microsoft Onedrive Agent\DOcumentation\OneDrive_Legal_Agent_v1.0\config_template.py
+C:\Users\arika\OneDrive\Litigation Automation\Microsoft Onedrive Agent\DOcumentation\OneDrive_Legal_Agent_v1.0\core\agent.py
+C:\Users\arika\OneDrive\Litigation Automation\Microsoft Onedrive Agent\DOcumentation\OneDrive_Legal_Agent_v1.0\core\agent.py OLD.py
+C:\Users\arika\OneDrive\Litigation Automation\Microsoft Onedrive Agent\DOcumentation\OneDrive_Legal_Agent_v1.0\core\onedrive_client.py
+C:\Users\arika\OneDrive\Litigation Automation\Microsoft Onedrive Agent\DOcumentation\OneDrive_Legal_Agent_v1.0\main.py
+C:\Users\arika\OneDrive\Litigation Automation\Microsoft Onedrive Agent\DOcumentation\OneDrive_Legal_Agent_v1.0\web\app.py
+C:\Users\arika\OneDrive\Litigation Automation\Microsoft Onedrive Agent\DOcumentation\OneDrive_Legal_Agent_v1.0\web\app.py OLD.py
+C:\Users\arika\OneDrive\Litigation Automation\Python Scripts\Google Photos Search\find_descriptions.py
+C:\Users\arika\OneDrive\Litigation Automation\Python Scripts\eml_batch_to_pdf.py
+C:\Users\arika\OneDrive\Litigation Automation\Quickie legal discovery system\legal_discovery_system.py
+C:\Users\arika\OneDrive\Litigation Automation\Quickie legal discovery system\web_dashboard.py
+C:\Users\arika\OneDrive\Litigation Automation\affidavit_transcriber.py
+C:\Users\arika\OneDrive\Litigation Automation\legal_search_tool_complete - for google KEEP\legal_search_package\evidence_manager.py
+C:\Users\arika\OneDrive\Litigation Automation\legal_search_tool_complete - for google KEEP\legal_search_package\legal_search_tool.py
+C:\Users\arika\OneDrive\Litigation Automation\legal_search_tool_complete - for google KEEP\legal_search_package\legal_search_web.py
+C:\Users\arika\OneDrive\Litigation Automation\legal_search_tool_complete - for google KEEP\legal_search_package\run_legal_search.py
+C:\Users\arika\OneDrive\Litigation Docs from GPT\V3_Automation_Scripts\auto_organize_evidence_v3.py
+C:\Users\arika\OneDrive\Litigation Docs from GPT\litigation_packet_VERMONT_v3_MASTER\V3_Scripts\auto_organize_evidence_v3.py
+C:\Users\arika\OneDrive\Litigation Docs from GPT\litigation_packet_VERMONT_v3_bundle\auto_organize_evidence_v3.py
+C:\Users\arika\OneDrive\Litigation Docs from GPT\litigation_packet_v2_bundle\auto_organize_evidence.py
+C:\Users\arika\OneDrive\Litigation\08_INCOMING\John Hancock long term care document dpwnloads on 11-9-2025\build_processing_log.py
+C:\Users\arika\OneDrive\Litigation\08_INCOMING\John Hancock long term care document dpwnloads on 11-9-2025\outputs\extract_claims_correspondence.py
+C:\Users\arika\OneDrive\Litigation\08_INCOMING\Sms backup and restore\sms_ingest_android_excel.py
+C:\Users\arika\OneDrive\Litigation\08_INCOMING\Sms backup and restore\sms_probe.py
+C:\Users\arika\OneDrive\Litigation\09-Data Schemas\batch_eob_process.py
+C:\Users\arika\OneDrive\Litigation\09-Data Schemas\batch_invoice_process.py
+C:\Users\arika\OneDrive\Litigation\09-Data Schemas\extract_one_detail_page.py
+C:\Users\arika\OneDrive\Litigation\09-Data Schemas\visualize_eob_fields.py
+C:\Users\arika\OneDrive\Litigation\09-Data Schemas\visualize_invoice_fields.py
+C:\Users\arika\OneDrive\Litigation\Aid4Mail Exports\Aid4 to json with python attachments\pdf_classifier.py
+C:\Users\arika\OneDrive\Litigation\Aid4Mail Exports\Json attachments\validate_attachments.py
+C:\Users\arika\OneDrive\Litigation\CloudHq Emails\Master by 100s\BookmarkExport.py
+C:\Users\arika\OneDrive\Litigation\CloudHq Emails\Master by 100s\BookmarkFix.py
+C:\Users\arika\OneDrive\Litigation\CloudHq Emails\Master by 100s\BookmarkMod.py
+C:\Users\arika\OneDrive\Litigation\CloudHq Emails\Master by 100s\BookmarkReport.py
+C:\Users\arika\OneDrive\Litigation\CloudHq Emails\Master by 100s\Bookmark_Export.py
+C:\Users\arika\OneDrive\Litigation\CloudHq Emails\Master by 100s\CombinedTBD\Clean Combines\Clean With TOC\extract_tocs.py
+C:\Users\arika\OneDrive\Litigation\CloudHq Emails\Master by 100s\CombinedTBD\Clean Combines\Clean With TOC\toc_to_excel.py
+C:\Users\arika\OneDrive\Litigation\CloudHq Emails\Master by 100s\Header_Insert.py
+C:\Users\arika\OneDrive\Litigation\CloudHq Emails\Master by 100s\QuickRename.py
+C:\Users\arika\OneDrive\Litigation\CloudHq Emails\Master by 100s\Replace_names_stamps.py
+C:\Users\arika\OneDrive\Litigation\CloudHq Emails\Master by 100s\build_pdf_ref.py
+C:\Users\arika\OneDrive\Litigation\CloudHq Emails\Master by 100s\list_pdfs.py
+C:\Users\arika\OneDrive\Litigation\CloudHq Emails\Master by 100s\print_bookmarks.py
+C:\Users\arika\OneDrive\Litigation\CloudHq Emails\Master by 100s\print_bookmarks_raw.py
+C:\Users\arika\OneDrive\Litigation\Litigation Downloads\ChatGPT downloads\attachment_manifest.flt.py
+C:\Users\arika\OneDrive\Litigation\Litigation Downloads\Claude\OCR outputs\extract_1122.py
+C:\Users\arika\OneDrive\Pixel 7 files tranferred here\Download\google-voice-takeout-parser-main\google-voice-takeout-parser-main\src\google_voice_takeout_parser\__init__.py
+C:\Users\arika\OneDrive\Pixel 7 files tranferred here\Download\google-voice-takeout-parser-main\google-voice-takeout-parser-main\src\google_voice_takeout_parser\_version.py
+C:\Users\arika\OneDrive\Pixel 7 files tranferred here\Download\google-voice-takeout-parser-main\google-voice-takeout-parser-main\src\google_voice_takeout_parser\google_voice_takeout_parser.py
+C:\Users\arika\OneDrive\Pixel 7 files tranferred here\Download\google-voice-takeout-parser-main\google-voice-takeout-parser-main\src\google_voice_takeout_parser\scripts\google_voice_parser.py
+C:\Users\arika\OneDrive\Pixel 7 files tranferred here\Download\google-voice-takeout-parser-main\google-voice-takeout-parser-main\tests\test_package.py
+C:\Users\arika\OneDrive\Pixel 7 files tranferred here\Download\google-voice-takeout-parser-main\google-voice-takeout-parser-main\tests\test_text_messages.py
+C:\Users\arika\OneDrive\Pixel 7 files tranferred here\Download\google-voice-takeout-parser-main\google-voice-takeout-parser-main\tests\test_voice.py
+C:\Users\arika\OneDrive\check_env.py
+C:\Users\arika\OneDrive\diagnose.py
+C:\Users\arika\OneDrive\fix_master.py
+C:\Users\arika\OneDrive\fix_master_v2.py
+C:\Users\arika\OneDrive\inspect_ooxml.py
+C:\Users\arika\OneDrive\inspect_wb.py
+C:\Users\arika\OneDrive\verify_fixed.py
+C:\Users\arika\Repo-for-Claude-android\drive_file_metadata.py
+C:\Users\arika\Repo-for-Claude-android\drive_scout_server.py
+C:\Users\arika\Repo-for-Claude-android\email_pipeline\export_all_emails.py
+C:\Users\arika\Repo-for-Claude-android\email_pipeline\merge_and_classify.py
+C:\Users\arika\Repo-for-Claude-android\email_pipeline\read_xlsx.py
+C:\Users\arika\Repo-for-Claude-android\email_pipeline\strippers.py
+C:\Users\arika\Repo-for-Claude-android\email_pipeline\validate_attachments.py
+C:\Users\arika\Repo-for-Claude-android\fw_classify.py
+C:\Users\arika\Repo-for-Claude-android\fw_classify_grp1.py
+C:\Users\arika\Repo-for-Claude-android\fw_classify_grp2.py
+C:\Users\arika\Repo-for-Claude-android\fw_classify_grp3.py
+C:\Users\arika\Repo-for-Claude-android\fw_classify_grp4.py
+C:\Users\arika\Repo-for-Claude-android\fw_classify_grp5.py
+C:\Users\arika\Repo-for-Claude-android\fw_dir_tree.py
+C:\Users\arika\Repo-for-Claude-android\fw_dirmap.py
+C:\Users\arika\Repo-for-Claude-android\fw_dirmap_grp1.py
+C:\Users\arika\Repo-for-Claude-android\fw_dirmap_grp2.py
+C:\Users\arika\Repo-for-Claude-android\fw_dirmap_grp3.py
+C:\Users\arika\Repo-for-Claude-android\fw_dirmap_grp4.py
+C:\Users\arika\Repo-for-Claude-android\fw_dirmap_grp5.py
+C:\Users\arika\Repo-for-Claude-android\fw_dirmap_grp6.py
+C:\Users\arika\Repo-for-Claude-android\fw_file_inventory.py
+C:\Users\arika\Repo-for-Claude-android\fw_triage.py
+C:\Users\arika\Repo-for-Claude-android\fw_triage_grp1.py
+C:\Users\arika\Repo-for-Claude-android\fw_triage_grp2.py
+C:\Users\arika\Repo-for-Claude-android\fw_triage_grp3.py
+C:\Users\arika\Repo-for-Claude-android\fw_triage_grp4.py
+C:\Users\arika\Repo-for-Claude-android\fw_walk.py
+C:\Users\arika\Repo-for-Claude-android\fw_walk_grp1.py
+C:\Users\arika\Repo-for-Claude-android\fw_walk_grp2.py
+C:\Users\arika\Repo-for-Claude-android\fw_walk_grp3.py
+C:\Users\arika\Repo-for-Claude-android\fw_walk_grp4.py
+C:\Users\arika\Repo-for-Claude-android\fw_walk_grp5.py
+C:\Users\arika\Repo-for-Claude-android\generate_dir_format_sample.py
+C:\Users\arika\Repo-for-Claude-android\jh_ltc\batch_eob_process.py
+C:\Users\arika\Repo-for-Claude-android\jh_ltc\batch_invoice_process.py
+C:\Users\arika\Repo-for-Claude-android\jh_ltc\extract_one_detail_page.py
+C:\Users\arika\Repo-for-Claude-android\jh_ltc\visualize_eob_fields.py
+C:\Users\arika\Repo-for-Claude-android\jh_ltc\visualize_invoice_fields.py
+C:\Users\arika\Repo-for-Claude-android\test_excel_output.py
+C:\Users\arika\Repo-for-Claude-android\tests\__init__.py
+C:\Users\arika\Repo-for-Claude-android\tests\conftest.py
+C:\Users\arika\Repo-for-Claude-android\tests\test_drive_scout_server.py
+C:\Users\arika\Repo-for-Claude-android\tests\test_export_all_emails.py
+C:\Users\arika\Repo-for-Claude-android\tests\test_fw_classify_grp1.py
+C:\Users\arika\Repo-for-Claude-android\tests\test_fw_classify_grp2.py
+C:\Users\arika\Repo-for-Claude-android\tests\test_fw_classify_grp3.py
+C:\Users\arika\Repo-for-Claude-android\tests\test_fw_classify_grp4.py
+C:\Users\arika\Repo-for-Claude-android\tests\test_fw_classify_grp5.py
+C:\Users\arika\Repo-for-Claude-android\tests\test_fw_dir_tree.py
+C:\Users\arika\Repo-for-Claude-android\tests\test_fw_dirmap.py
+C:\Users\arika\Repo-for-Claude-android\tests\test_fw_dirmap_grp1.py
+C:\Users\arika\Repo-for-Claude-android\tests\test_fw_dirmap_grp2.py
+C:\Users\arika\Repo-for-Claude-android\tests\test_fw_dirmap_grp3.py
+C:\Users\arika\Repo-for-Claude-android\tests\test_fw_dirmap_grp4.py
+C:\Users\arika\Repo-for-Claude-android\tests\test_fw_dirmap_grp5.py
+C:\Users\arika\Repo-for-Claude-android\tests\test_fw_dirmap_grp6.py
+C:\Users\arika\Repo-for-Claude-android\tests\test_fw_file_inventory.py
+C:\Users\arika\Repo-for-Claude-android\tests\test_fw_triage.py
+C:\Users\arika\Repo-for-Claude-android\tests\test_fw_triage_grp1.py
+C:\Users\arika\Repo-for-Claude-android\tests\test_fw_triage_grp2.py
+C:\Users\arika\Repo-for-Claude-android\tests\test_fw_triage_grp3.py
+C:\Users\arika\Repo-for-Claude-android\tests\test_fw_triage_grp4.py
+C:\Users\arika\Repo-for-Claude-android\tests\test_fw_walk.py
+C:\Users\arika\Repo-for-Claude-android\tests\test_fw_walk_grp1_grp2.py
+C:\Users\arika\Repo-for-Claude-android\tests\test_fw_walk_grp3.py
+C:\Users\arika\Repo-for-Claude-android\tests\test_fw_walk_grp4.py
+C:\Users\arika\Repo-for-Claude-android\tests\test_jh_ltc_eob.py
+C:\Users\arika\Repo-for-Claude-android\tests\test_jh_ltc_invoice.py
+C:\Users\arika\Repo-for-Claude-android\tests\test_merge_and_classify.py
+C:\Users\arika\Repo-for-Claude-android\tests\test_read_xlsx.py
+C:\Users\arika\Repo-for-Claude-android\tests\test_strippers.py
+C:\Users\arika\Repo-for-Claude-android\tests\test_validate_attachments.py

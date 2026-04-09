@@ -13,3 +13,10 @@ __pycache__/
 email_pipeline/Email_Body_Processing_Config.json
 email_pipeline/*.xlsx
 email_pipeline/*.json
+
+# Local Claude Code config — machine-specific
+.claude/
+.superpowers/
+
+# Working output / data artifacts — keep locally, never commit
+output/

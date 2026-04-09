@@ -1,3 +1,12 @@
+# Tool Use Choices
+
+These rules apply globally across all work — fileWalker, email pipeline, ad-hoc analysis, any context.
+
+## Excel Files — MANDATORY
+All Excel file creation and editing on the PC MUST use the Excel MCP (`mcp__Excel__Windows___*` tools), never openpyxl, xlsxwriter, or any Python library. If Excel is not already running on the PC, open it first so the Excel MCP can connect. Always use the Excel MCP unless it is literally impossible (e.g. running headless on a remote server with no Excel installed).
+
+---
+
 # Project Context
 
 ## What This Is
@@ -90,7 +99,7 @@ Saved at: `/root/.claude/plans/giggly-wiggling-castle.md`
 ### Build Rules
 1. Do NOT build anything without explicit user approval — ask before each piece
 2. Do NOT build everything at once — build in phases, discuss between phases
-3. Production Excel files must use Excel MCP tools in VS Code, not openpyxl
+3. Excel files → see Global Rules at top of this file (Excel MCP mandatory)
 4. All code committed to git so it persists across sessions
 
 ---
@@ -158,7 +167,7 @@ C:\Users\arika\AppData\Local\Programs\Python\Python311\python.exe -m pytest test
 ## Email Evidence Pipeline
 
 A second major pipeline alongside fileWalker, operating on litigation email evidence.
-Both pipelines converge at the Chroma indexing layer (planned) and via the sha256 join key.
+Both pipelines share the sha256 join key. Search is handled by Gemini context cache + SQLite FTS5 (ChromaDB shelved).
 
 ### Email Body Pipeline Chain
 
@@ -281,7 +290,9 @@ Results 2026-03-18: 1,695 unique, 1,550 OK, 81 CloudHQ-only (delta list for next
 - sha256 in Attachment Manifest = SHA256 in fileWalker Master_File_Inventory
 - OCR output from fw_ocr will link back via sha256
 
-### Downstream: Chroma / RAG (PLANNED, NOT YET BUILT)
+### Downstream: Chroma / RAG — SHELVED
+> Superseded by Gemini context cache + SQLite FTS5 approach (see Email Sifter in MasterSchema.md).
+> ChromaDB is installed but not configured or used. Original design preserved below for reference.
 - Primary chunk: Body.SenderText; Secondary: Body.Text
 - Metadata: RFC 822 Message ID, Header.From, Header.Date, Header.Subject,
   Header.X-Gmail-Labels, Email.HashSHA256

@@ -446,3 +446,114 @@ class TestOpenOutputDir:
             client.get("/api/open-output-dir")
         args = mock_popen.call_args.args[0]
         assert str(dss.OUTPUT_DIR) in args[1]
+
+
+# ---------------------------------------------------------------------------
+# TestSheetsRetry
+# ---------------------------------------------------------------------------
+class TestSheetsRetry:
+    """Tests for _sheets_op_with_retry — exponential backoff helper."""
+
+    def test_succeeds_on_first_attempt_no_sleep(self):
+        """Returns value immediately; asyncio.sleep is never called."""
+        async def _run():
+            call_count = 0
+
+            async def make_coro():
+                nonlocal call_count
+                call_count += 1
+                return "ok"
+
+            with patch("asyncio.sleep") as mock_sleep:
+                result = await dss._sheets_op_with_retry(make_coro, label="test")
+
+            assert result == "ok"
+            assert call_count == 1
+            mock_sleep.assert_not_called()
+
+        import asyncio
+        asyncio.run(_run())
+
+    def test_retries_after_transient_error_succeeds_on_second(self):
+        """Fails once, then succeeds — returns the value from the second attempt."""
+        async def _run():
+            attempt = 0
+
+            async def make_coro():
+                nonlocal attempt
+                attempt += 1
+                if attempt == 1:
+                    raise RuntimeError("transient")
+                return "recovered"
+
+            with patch("asyncio.sleep"):
+                result = await dss._sheets_op_with_retry(make_coro, label="test")
+
+            assert result == "recovered"
+            assert attempt == 2
+
+        import asyncio
+        asyncio.run(_run())
+
+    def test_exhausts_retries_and_reraises(self):
+        """After SHEETS_MAX_RETRIES+1 attempts all fail, re-raises the last exception."""
+        async def _run():
+            call_count = 0
+
+            async def make_coro():
+                nonlocal call_count
+                call_count += 1
+                raise RuntimeError("persistent")
+
+            with patch("asyncio.sleep"):
+                with pytest.raises(RuntimeError, match="persistent"):
+                    await dss._sheets_op_with_retry(make_coro, label="test")
+
+            assert call_count == dss.SHEETS_MAX_RETRIES + 1
+
+        import asyncio
+        asyncio.run(_run())
+
+    def test_sleep_durations_follow_exponential_backoff(self):
+        """Sleep calls follow 5, 10, 20, 40, 80 s sequence (base * 2^attempt)."""
+        async def _run():
+            async def make_coro():
+                raise RuntimeError("fail")
+
+            sleep_calls = []
+
+            async def fake_sleep(secs):
+                sleep_calls.append(secs)
+
+            with patch("asyncio.sleep", side_effect=fake_sleep):
+                with pytest.raises(RuntimeError):
+                    await dss._sheets_op_with_retry(make_coro, label="test")
+
+            expected = [
+                dss.SHEETS_RETRY_BASE * (2 ** i)
+                for i in range(dss.SHEETS_MAX_RETRIES)
+            ]
+            assert sleep_calls == expected
+
+        import asyncio
+        asyncio.run(_run())
+
+    def test_400_error_raises_sheets_cell_limit_error_immediately(self):
+        """A 400 / cell-limit error is not retried — SheetsCellLimitError raised on attempt 1."""
+        async def _run():
+            call_count = 0
+
+            async def make_coro():
+                nonlocal call_count
+                call_count += 1
+                raise Exception("400 Bad Request: cell limit exceeded")
+
+            with patch("asyncio.sleep") as mock_sleep:
+                with pytest.raises(dss.SheetsCellLimitError):
+                    await dss._sheets_op_with_retry(make_coro, label="test")
+
+            assert call_count == 1
+            mock_sleep.assert_not_called()
+
+        import asyncio
+        asyncio.run(_run())

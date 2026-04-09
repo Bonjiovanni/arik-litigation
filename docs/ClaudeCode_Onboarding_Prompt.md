@@ -39,8 +39,8 @@ It has never been formally documented in CLAUDE.md or MasterSchema.md.
 Both pipelines feed the same litigation case and converge at two points:
 1. The attachment files — emails have attachments that fileWalker also
    walks and classifies. The sha256 hash is the join key between them.
-2. ChromaDB — both email bodies and extracted attachment text will
-   eventually be indexed for hybrid RAG + BM25 semantic search.
+2. Search layer — email bodies and extracted attachment text are searchable
+   via Gemini context cache (semantic) + SQLite FTS5 (keyword). ChromaDB shelved.
 
 **What this prompt asks Code to do:**
 1. Read and orient on existing documentation
@@ -85,8 +85,8 @@ Confirm you have read all three with a one-line summary of each.
 WHY: Significant design work was done in Claude.ai chat sessions, not Code.
 This surfaces context not yet in the .md files.
 
-Search for: Aid4Mail exports, CloudHQ spreadsheet, ChromaDB, attachment OCR,
-body text extraction, Power Query joins, EmailMaster.xlsx design.
+Search for: Aid4Mail exports, CloudHQ spreadsheet, SQLite corpus, Gemini cache,
+attachment OCR, body text extraction, Power Query joins, EmailMaster.xlsx design.
 
 Summarize what you find in a brief paragraph.
 
@@ -148,7 +148,7 @@ UPDATE script list based on Step 4 answers before appending.
 ## Email Evidence Pipeline — Separate System, Same Case
 
 This is a second major pipeline alongside fileWalker, operating on email
-evidence. Both converge at the Chroma indexing layer.
+evidence. Both share the sha256 join key. Search handled by Gemini cache + SQLite FTS5 (ChromaDB shelved).
 
 ### Email Body Pipeline Chain
 
@@ -268,7 +268,8 @@ PQ Parameter: Email_Body_Input_File
 - sha256 in Attachment Manifest = SHA256 in fileWalker Master_File_Inventory
 - OCR output from fw_ocr links back via sha256
 
-### Downstream Chroma / RAG — PLANNED, NOT YET BUILT
+### Downstream: Chroma / RAG — SHELVED
+> Superseded by Gemini context cache + SQLite FTS5 (see Email Sifter in MasterSchema.md).
 - Primary chunk: Body.SenderText; Secondary: Body.Text
 - Metadata: RFC 822 Message ID, Header.From, Header.Date, Header.Subject,
   Header.X-Gmail-Labels, Email.HashSHA256
@@ -285,7 +286,7 @@ Open: C:\Users\arika\OneDrive\Litigation\09-Data Schemas\MasterSchema.md
 
 Targeted updates only — do not restructure:
 1. Master Excel File Strategy: change DISCUSSED to DESIGNED, note EmailMaster.xlsx plan
-2. emails_master.jsonl: note Excel EmailMaster.xlsx is near-term, JSONL/Chroma is downstream
+2. emails_master.jsonl: note Excel EmailMaster.xlsx is near-term, JSONL available if vector DB revisited (Chroma shelved)
 3. Open Items: close out "Resolve master Excel file strategy" and "Decide body master.json"
 4. Add section "Email Body Pipeline Scripts" with pipeline chain
 

@@ -47,10 +47,10 @@ tests/test_fw_classify.py       ← pending (merged module, not yet delivered)
 
 ## New functions needing tests
 
-### fw_classify_grp1.py — two new functions
-Add to `tests/test_fw_classify_grp1.py`:
-- `detect_form_fields` — add a new `TestDetectFormFields` class
-- `check_page_density` — add a new `TestCheckPageDensity` class
+### fw_classify_grp1.py — two new functions — DONE ✓ (2026-03-28)
+Tests exist in `tests/test_fw_classify_grp1.py`:
+- `TestDetectFormFields` class — written and passing
+- `TestCheckPageDensity` class — written and passing
 
 ### fw_classify.py — merged module is STALE
 grp1 and grp5 both changed since the merged module was last built.
@@ -77,18 +77,14 @@ and 4 walk_files Likely* column tests in `TestWalkFilesPipeline`.
 
 ---
 
-## NEW — 2026-03-16 — fw_walk.py COLUMNS synced to fw_walk_grp2.py
+## NEW — 2026-03-16 — fw_walk.py COLUMNS synced to fw_walk_grp2.py — DONE ✓ (verified 2026-03-29)
 
 Added 3 missing columns to fw_walk.py COLUMNS list:
 - `HasFormFields` (after NeedsOCR)
 - `ExtractionMethod` (after HasFormFields)
 - `EntityHits` (between KeywordHits and MoneyDetected)
 
-These were present in fw_walk_grp2.py but missing from the merged fw_walk.py, causing a column index mismatch that broke fw_classify.
-
-### Tests needed:
-- Verify `fw_walk.COLUMNS` and `fw_walk_grp2.COLUMNS` are identical (or add a sync-check test)
-- Verify `fw_walk._COL_INDEX["ProcessingStatus"]` == `fw_walk_grp2._COL_INDEX["ProcessingStatus"]`
+Verified 2026-03-29: `fw_walk.COLUMNS == fw_walk_grp2.COLUMNS` — exact match confirmed.
 
 ## After all merged modules delivered
 
@@ -109,6 +105,24 @@ Review these locations manually — there may be litigation-relevant files burie
 
 **To scan a specific AppData subfolder:** right-click it in Drive Scout tree → Deep Scan → Sheets
 (it will work even though the parent AppData is excluded from bulk scans)
+
+---
+
+## NEW — 2026-03-24 — run_scan_to_sheets self-healing retry logic — DONE ✓ (2026-03-29)
+
+Added `_sheets_op_with_retry` (module-level async helper) and rewrote
+`run_scan_to_sheets` so every Sheets API call retries up to 5× with
+exponential backoff (5 10 20 40 80 s) and a fresh service/token/TCP
+connection on each attempt.
+
+New constants: `SHEETS_MAX_RETRIES = 5`, `SHEETS_RETRY_BASE = 5`.
+
+### `TestSheetsRetry` (5 tests added to `tests/test_drive_scout_server.py`)
+- succeeds on first attempt — returns value, no sleep
+- retries after one transient exception, succeeds on 2nd attempt
+- exhausts SHEETS_MAX_RETRIES attempts then re-raises last exception
+- sleep durations follow 5/10/20/40/80 s exponential sequence
+- 400/cell-limit error raises SheetsCellLimitError immediately (no retry)
 
 ---
 
