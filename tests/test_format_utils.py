@@ -32,6 +32,16 @@ def test_apply_word_marker_normal():
     assert apply_word_marker("hello", 0.95, 0.20, 0.50) == "hello"
 
 
+def test_apply_word_marker_special_token_passthrough():
+    # Bracket-wrapped tokens must pass through unchanged regardless of confidence.
+    # Low confidence (below phonetic threshold) should NOT produce [phonetic: [CROSSTALK]].
+    assert apply_word_marker("[CROSSTALK]", 0.05, 0.20, 0.50) == "[CROSSTALK]"
+    # Also passes through even at inaudible-level confidence (should NOT produce [inaudible]).
+    assert apply_word_marker("[Speaker]", 0.01, 0.20, 0.50) == "[Speaker]"
+    # High confidence also passes through (sanity check).
+    assert apply_word_marker("[CROSSTALK]", 0.99, 0.20, 0.50) == "[CROSSTALK]"
+
+
 def make_word(word, start_ms, end_ms, speaker="david", confidence=0.95, overlap=False):
     return {
         "word": word,
