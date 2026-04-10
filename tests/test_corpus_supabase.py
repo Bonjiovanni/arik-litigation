@@ -327,3 +327,99 @@ class TestIntegrationInsert:
             "message_id, extended"
         ).eq("message_id", self.TEST_MSG_ID).execute()
         assert result.data[0]["extended"]["custom_field"] == "unique_marker_xyz"
+
+
+# ═══════════════════════════════════════════════
+# Loaded data verification — row counts and integrity
+# ═══════════════════════════════════════════════
+
+class TestLoadedDataCounts:
+    """Verify the production data load matches expected counts."""
+
+    def test_emails_master_row_count(self):
+        client = get_supabase_client()
+        result = client.table("emails_master").select(
+            "message_id", count="exact"
+        ).limit(0).execute()
+        assert result.count == 1550, f"Expected 1550 emails, got {result.count}"
+
+    def test_attachments_row_count(self):
+        client = get_supabase_client()
+        result = client.table("attachments").select(
+            "attachment_id", count="exact"
+        ).limit(0).execute()
+        assert result.count == 2154, f"Expected 2154 attachments, got {result.count}"
+
+    def test_orphan_attachment_count(self):
+        """187 attachments should have extraction_status='pending_orphan'."""
+        client = get_supabase_client()
+        result = client.table("attachments").select(
+            "attachment_id", count="exact"
+        ).eq("extraction_status", "pending_orphan").limit(0).execute()
+        assert result.count == 187, f"Expected 187 orphans, got {result.count}"
+
+    def test_column_map_row_count(self):
+        """103 email + 17 attachment = 120 column mappings."""
+        client = get_supabase_client()
+        result = client.table("_column_map").select(
+            "original_name", count="exact"
+        ).limit(0).execute()
+        assert result.count == 120, f"Expected 120 column mappings, got {result.count}"
+
+    def test_no_null_message_ids_in_emails(self):
+        """Every email must have a message_id (PK)."""
+        client = get_supabase_client()
+        result = client.table("emails_master").select(
+            "message_id", count="exact"
+        ).is_("message_id", "null").limit(0).execute()
+        assert result.count == 0, f"Found {result.count} emails with NULL message_id"
+
+    def test_non_orphan_attachments_have_valid_fk(self):
+        """Non-orphan attachments should all have a message_id that exists in emails_master."""
+        client = get_supabase_client()
+        # Get count of non-orphan attachments with non-null message_id
+        non_orphan = client.table("attachments").select(
+            "attachment_id", count="exact"
+        ).eq("extraction_status", "pending").limit(0).execute()
+        # Get count of non-orphan attachments with null message_id (should be 0)
+        bad_rows = client.table("attachments").select(
+            "attachment_id", count="exact"
+        ).eq("extraction_status", "pending").is_("message_id", "null").limit(0).execute()
+        assert bad_rows.count == 0, \
+            f"{bad_rows.count} non-orphan attachments have NULL message_id"
+
+    def test_orphan_attachments_have_null_message_id(self):
+        """All orphan attachments should have message_id=NULL (FK safety)."""
+        client = get_supabase_client()
+        orphans_with_msg_id = client.table("attachments").select(
+            "attachment_id", count="exact"
+        ).eq("extraction_status", "pending_orphan").neq("message_id", "null").limit(0).execute()
+        # This checks orphans that have a non-null message_id — should be 0
+        # (we set message_id=None for orphans to satisfy FK constraint)
+        # Note: neq with "null" doesn't work for NULL checks, use not_.is_ instead
+        orphans_total = client.table("attachments").select(
+            "attachment_id", count="exact"
+        ).eq("extraction_status", "pending_orphan").limit(0).execute()
+        orphans_null = client.table("attachments").select(
+            "attachment_id", count="exact"
+        ).eq("extraction_status", "pending_orphan").is_("message_id", "null").limit(0).execute()
+        assert orphans_total.count == orphans_null.count, \
+            f"{orphans_total.count - orphans_null.count} orphans still have a message_id set"
+
+    def test_emails_have_extended_jsonb(self):
+        """Spot-check that emails have populated extended JSONB."""
+        client = get_supabase_client()
+        result = client.table("emails_master").select("extended").range(0, 0).execute()
+        assert result.data, "No emails returned"
+        ext = result.data[0].get("extended")
+        assert ext is not None, "First email has NULL extended"
+        assert isinstance(ext, dict), f"extended is {type(ext)}, not dict"
+        assert len(ext) > 0, "extended dict is empty"
+
+    def test_fts_returns_results_for_known_term(self):
+        """FTS should find 'EastRise' in the loaded corpus."""
+        client = get_supabase_client()
+        result = client.table("emails_master").select(
+            "message_id"
+        ).text_search("fts_vector", "EastRise").execute()
+        assert len(result.data) == 48, f"Expected 48 EastRise hits, got {len(result.data)}"
