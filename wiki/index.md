@@ -15,7 +15,12 @@ Last updated: 2026-04-09
 
 ## Topics
 
-_No topic pages yet. Candidates: Mortgage Delinquency, LTC Claims, Trust Property Insurance, Tangible Personal Property._
+| Page | Email Count | Description |
+|------|-------------|-------------|
+| [Mortgage Delinquency](topics/mortgage_delinquency.md) | 71 FTS hits | EastRise mortgage default, HELOC late payments, CPI insurance. |
+| [Trust Property Insurance](topics/trust_property_insurance.md) | 279 FTS hits | Liberty Mutual lapse, EastRise CPI, Kinney Insurance engagement. |
+| [LTC Claims](topics/ltc_claims.md) | 22 FTS hits + Via Benefits | John Hancock LTC policy, Via Benefits reimbursements, uncashed checks. |
+| [Trustee Removal](topics/trustee_removal.md) | 100+ FTS hits | Breach of duty evidence, court case 25-CV-02133, attorney escalation timeline. |
 
 ## How This Works
 

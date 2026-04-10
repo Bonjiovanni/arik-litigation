@@ -28,3 +28,13 @@ Append-only chronological record of ingests, queries, and lint passes.
 - Jeanne (heronsway@surfglobal.net) — 53 from, 270 total, trustee
 - Molly Bucci (mbucci@primmer.com) — 43 emails, attorney at Primmer
 - Amanda Marks, Matt Marks, Barbara Marks — family members
+
+## 2026-04-09 — Topic pages compiled
+
+**Source:** Same Supabase corpus. Cross-referenced FTS queries across multiple search terms per topic.
+
+**Pages created:**
+- `topics/mortgage_delinquency.md` — 71 emails. Timeline from first missed payment through Dec 2025 CPI non-payment. Key fact: HELOC autopay on 21st, due on 15th.
+- `topics/trust_property_insurance.md` — 279 emails (broad search, many overlap). Liberty Mutual lapse Jun 2024 → EastRise CPI force-placement → Kinney broker engagement → ongoing Dec 2025.
+- `topics/ltc_claims.md` — 22 direct hits + Via Benefits notifications. Active benefits 2022–2024, uncashed checks 2025, potential unaccounted asset.
+- `topics/trustee_removal.md` — 100+ emails. 5-phase timeline: informal complaints → attorney engagement → court proceedings → removal push. Court case 25-CV-02133. Documented breaches table.
