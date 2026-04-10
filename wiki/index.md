@@ -7,11 +7,15 @@ Last updated: 2026-04-09
 
 ## Entities
 
-_No entity pages yet. First pages to create: Jeanne Lavigne, EastRise, John Hancock._
+| Page | Type | Email Count | Description |
+|------|------|-------------|-------------|
+| [Jeanne Lavigne](entities/jeanne_lavigne.md) | Person (Trustee) | 270 from/to/cc, 406 body mentions | Trustee of Marks Family Trust. Central figure in litigation. |
+| [EastRise](entities/eastrise.md) | Financial Institution | 48 FTS hits | Credit union holding mortgage, HELOC, bank accounts. Mortgage in default. |
+| [John Hancock](entities/john_hancock.md) | Insurance Company | 9 FTS hits + 11 LTC | LTC insurance provider for Robert Marks. |
 
 ## Topics
 
-_No topic pages yet. First pages to create: Mortgage Delinquency, LTC Claims._
+_No topic pages yet. Candidates: Mortgage Delinquency, LTC Claims, Trust Property Insurance, Tangible Personal Property._
 
 ## How This Works
 
