@@ -572,12 +572,12 @@ producing a classified, reviewable inventory of the full attachment corpus.
 
 ## Email Sifter — Search Architecture ✅
 
-Last updated: 2026-04-08. Database built and loaded.
+Last updated: 2026-04-09. Migrated from SQLite to Supabase.
 
 ### Goal
 A single, unified, searchable email corpus combining email bodies and attachment
-content — stored locally and queryable via a hybrid semantic + keyword search
-invokable as a Claude skill.
+content — stored in the cloud and queryable from any device via a hybrid
+semantic + keyword search invokable as a Claude skill.
 
 ### Decision: One Gemini Context Cache (not Vertex AI, not two caches) ✅
 - Google AI Pro provides 2M token cache limit
@@ -592,28 +592,57 @@ invokable as a Claude skill.
 - Two-cache architecture ruled out: Gemini can only reference one cache per API
   call; two caches cannot cross-reference in a single response
 
-### Decision: SQLite with Two Tables (renamed database) ✅
-**Database name: `litigation_corpus.db`** (renamed from `email_sifter.db`)
-**Location:** `C:\Users\arika\OneDrive\Litigation\Pipeline\litigation_corpus.db`
+### Decision: Supabase PostgreSQL (migrated from SQLite 2026-04-09) ✅
 
-Database scope: Single unified database for ALL evidence types (emails, texts, files), not just emails.
-- `emails_master` — sourced from V11.xlsx (99 columns, 1,550 rows)
-- `attachments` — sourced from Attachment_Manifest_GML_EML_MSG (1).xlsx
-  (2,154 rows, one per attachment)
-- `entity_master` — shared entity table (currently empty, reserved for future expansion)
-- `entity_candidates` — shared entity candidates table (currently empty, reserved for future expansion)
-- Join key: RFC 822 Message ID throughout
-- FTS5 virtual tables (`_fts_emails`, `_fts_attachments`) index Subject + body_clean.1 and attachment filenames + extracted text for keyword/literal search
-- Physical files (PDFs, images, docs) stay on disk — SQLite holds paths only
-- SQLite role: keyword search + full metadata retrieval after a cache hit
+**Why Supabase over SQLite:**
+- Query from any device without laptop running (primary motivation)
+- Built-in web GUI (Table Editor + SQL Editor) accessible from any browser
+- Official MCP server — Claude Code can query directly during pipeline work
+- PostgreSQL — proper relational DB, better long term than SQLite for growing corpus
+- FTS via `tsvector`/`tsquery` (auto-populated generated columns, no manual FTS insert)
 
-**Status: BUILT 2026-04-08**
+**Project:** Bonjiovanni's Litigators / Bonjiovanni's Project
+**API URL:** `https://htsjppuoylxepasyghgr.supabase.co`
+**Credentials:** `C:\Users\arika\OneDrive\Litigation\Pipeline\.env`
+**Tier:** Free (500MB limit, 5GB egress, pauses after 7 days inactivity)
+
+**Tables:**
+
+| Table | Rows | Purpose |
+|-------|------|---------|
+| `emails_master` | 1,550 | Emails from V11.xlsx Merge1 (24 core columns + `extended` JSONB + auto `fts_vector`) |
+| `attachments` | 2,154 | From attachment manifest (18 core columns + auto `fts_vector`) |
+| `entity_master` | 0 | Shared entity registry (reserved) |
+| `entity_candidates` | 0 | Entity resolution candidates (reserved) |
+| `extraction_log` | 0 | Per-attachment extraction tracking |
+| `_column_map` | 120 | Original Excel header → Supabase column name registry |
+
+**Key schema differences vs former SQLite:**
+
+| SQLite | Supabase PostgreSQL |
+|--------|-------------------|
+| All 103 email columns as individual columns | 24 core columns + `extended` JSONB for rest |
+| FTS5 virtual tables (manual population) | `tsvector` generated column + GIN index (auto) |
+| `INTEGER AUTOINCREMENT` | `BIGSERIAL` |
+| Local file, laptop must be on | Cloud, always on, any device |
+| Orphan FKs loaded with PRAGMA FK OFF | Orphan attachments get `message_id = NULL` |
+
+**FTS query syntax:**
+```sql
+-- PostgreSQL/Supabase (replaces SQLite FTS5 MATCH syntax)
+SELECT * FROM emails_master WHERE fts_vector @@ to_tsquery('english', 'EastRise');
+```
+
+**Status: BUILT & LOADED 2026-04-09**
 - Database loaded: 1,550 emails from V11.xlsx Merge1 sheet
 - Attachments loaded: 2,154 from manifest
-- Orphan attachments: 187 flagged (in manifest but no parent email)
-- FTS5 indexed: `_fts_emails` (Subject + body_clean.1), `_fts_attachments` (filename + extracted_text)
+- Orphan attachments: 187 (message_id set to NULL, extraction_status='pending_orphan')
+- FTS auto-indexed on insert (tsvector generated columns)
 - Entity tables created: empty, ready for future use
-- Tests: 52 passing
+- Tests: 80 passing (28 Supabase + 52 SQLite legacy)
+
+**Former SQLite database** (`litigation_corpus.db`) retained as local backup at
+`C:\Users\arika\OneDrive\Litigation\Pipeline\litigation_corpus.db`
 
 ### Decision: What Goes in the Cache 🎯
 - Email bodies + metadata: the 12-field slim CSV as-is
@@ -652,17 +681,41 @@ PDF classifier rerun 2026-04-03 against attachment/ folder (342 PDFs, 911 total 
 
 | Script | Purpose |
 |--------|---------|
-| `corpus_sqlite_schema.py` | Creates litigation_corpus.db schema: emails_master, attachments, entity_master, entity_candidates tables; FTS5 indexes; FK constraints; domain-aware design |
-| `corpus_sqlite_loader.py` | Loads data from Excel sources: emails from V11.xlsx Merge1 sheet, attachments from manifest. CLI args for file paths. Validates orphans. |
-| `tests/test_corpus_sqlite.py` | 52 tests covering: schema creation, field mapping, data loading, foreign keys, FTS5 functionality, domain isolation |
+| `corpus_supabase_loader.py` | **Active loader.** Loads data from Excel sources into Supabase. Maps 103 Excel columns to 24 core + extended JSONB. Batch inserts (50/batch). CLI args for file paths. |
+| `corpus_sqlite_schema.py` | **Shared utility.** Column mapping functions (`to_snake_case`, `build_email_column_mapping`) used by both SQLite and Supabase loaders. Also creates local SQLite schema (legacy). |
+| `corpus_sqlite_loader.py` | **Legacy.** Original SQLite loader. Retained for local backup/offline use. |
+| `tests/test_corpus_supabase.py` | 28 tests: column mapping, core/extended split, live Supabase insert/FTS/JSONB |
+| `tests/test_corpus_sqlite.py` | 52 tests: SQLite schema, field mapping, FK, FTS5, domain isolation (legacy) |
 
 ### Claude Skill 🎯
 - A Claude skill that detects email corpus queries and runs hybrid search:
   1. Gemini API call with cached context → semantic hits
-  2. SQLite FTS5 query → keyword/literal hits
+  2. Supabase FTS query → keyword/literal hits
   3. Merge by Message ID → pull full record from emails_master
   4. Synthesize grounded response with provenance
-- Scripts to build: sifter_gemini.py, sifter_sqlite.py, sifter_hybrid.py
+- Scripts to build: sifter_gemini.py, sifter_supabase.py, sifter_hybrid.py
+
+### Karpathy Wiki — Persistent Synthesis Layer 🎯
+
+A structured, interlinked collection of markdown files maintained by Claude Code.
+Knowledge is compiled once from raw sources and kept current — not re-derived on every query.
+
+**Location:** `C:\Users\arika\Repo-for-Claude-android\wiki\`
+
+**Structure:**
+```
+wiki/
+    entities/     — one page per key person/org (jeanne_lavigne.md, eastrise.md, etc.)
+    topics/       — one page per legal topic (mortgage_delinquency.md, ltc_claims.md, etc.)
+    index.md      — content catalog of all wiki pages
+    log.md        — append-only record of ingests, queries, lint passes
+```
+
+**Integration:** Wiki files become a third input to the Gemini context cache alongside
+email corpus and extracted attachment text. Small footprint (~50-100K tokens).
+
+**Source:** Karpathy LLM Wiki pattern (April 2026). Full session transcript:
+`docs/supabase_karpathy_wiki_session.md`
 
 ---
 
