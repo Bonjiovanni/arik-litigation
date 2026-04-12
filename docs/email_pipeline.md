@@ -54,12 +54,34 @@ is a sparse dict; fields vary by source. Required structure:
 **Location:** `email_pipeline/export_all_emails.py`
 
 **What it does:**
-1. When run standalone: prompts for input JSON and output xlsx via file picker.
-2. When called from merge_and_classify (Y at end-of-run prompt): input path passed as argv[1], only asks for output.
-3. Writes all fields from all records to Excel using `xlsxwriter` with `write_string()` — values starting with `=`, `+`, `-`, `@` are never interpreted as formulas.
-4. Priority columns appear first; all other columns follow in alphabetical order.
-5. Auto-fits column widths (sampled from first 200 rows, capped at 60).
-6. Warns and re-prompts if the output file already exists.
+1. Writes all fields from all records to Excel using `xlsxwriter` with `write_string()` — values starting with `=`, `+`, `-`, `@` are never interpreted as formulas.
+2. Priority columns appear first; all other columns follow in alphabetical order.
+3. Auto-fits column widths (sampled from first 200 rows, capped at 60).
+
+**Three usage modes:**
+
+| Mode | Args | Input | Output | GUI? |
+|---|---|---|---|---|
+| Standalone | (none) | File picker | File picker | Yes |
+| Chained | `argv[1]` | Provided path | File picker | Partial |
+| Headless | `argv[1]` + `argv[2]` | Provided path | Provided path | None |
+
+**Examples:**
+```
+# Standalone — both pickers open
+python export_all_emails.py
+
+# Chained from merge_and_classify — input provided, output picker opens
+python export_all_emails.py "C:\path\to\combined.json"
+
+# Headless — fully non-interactive, suitable for batch/CLI automation
+python export_all_emails.py "C:\path\to\input.json" "C:\path\to\output.xlsx"
+```
+
+In headless mode:
+- Parent directories for the output path are created automatically.
+- Existing output files are overwritten without prompting.
+- No tkinter or GUI dependencies are triggered.
 
 **Priority columns (in order):**
 `Header.Date`, `Header.Message-ID`, `Address.Sender`, `Address.To`, `Header.Subject`,

@@ -4,10 +4,13 @@ export_all_emails.py
 Reads a combined_repository.json and exports all records / all fields
 to an Excel file.
 
-When run standalone: prompts for input and output files via file picker
-(remembers last choices in Email_Body_Processing_Config.json).
-When called from merge_and_classify.py: input path passed as argv[1],
-still prompts for output file.
+Usage modes:
+  1. Standalone (no args): prompts for input and output files via file picker
+     (remembers last choices in Email_Body_Processing_Config.json).
+  2. argv[1] only: input path provided (e.g. from merge_and_classify.py),
+     still prompts for output file via picker.
+  3. argv[1] + argv[2]: fully headless — input and output paths both provided,
+     no GUI, no prompts. Suitable for batch/CLI automation.
 
 Uses xlsxwriter with write_string() so values starting with = are never
 treated as formulas.
@@ -163,12 +166,19 @@ def main():
         return
 
     # --- Output file ---
-    last_output = cfg.get("last_export_output_path", str(SCRIPT_DIR / "all_emails.xlsx"))
-    print("\n[2] Select output file")
-    out_path = pick_output_file(last_output)
-    if not out_path:
-        print("  Aborted.")
-        return
+    if len(sys.argv) > 2:
+        # Headless mode — output path provided on command line, no GUI
+        out_path = Path(sys.argv[2])
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        print(f"\n[2] Output: {out_path}  (passed on command line)")
+    else:
+        # Interactive mode — show picker
+        last_output = cfg.get("last_export_output_path", str(SCRIPT_DIR / "all_emails.xlsx"))
+        print("\n[2] Select output file")
+        out_path = pick_output_file(last_output)
+        if not out_path:
+            print("  Aborted.")
+            return
     cfg["last_export_output_path"] = str(out_path)
 
     save_config(cfg)
