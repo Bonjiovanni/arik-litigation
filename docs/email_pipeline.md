@@ -167,14 +167,38 @@ First run defaults for export output: `email_pipeline/all_emails.xlsx`
 
 ## Output files
 
-All output files land wherever you select via the file picker — they are not fixed-path.
-They are excluded from git via `.gitignore`.
+Output files land wherever you select via the file picker. They are excluded from git
+via `.gitignore`. The current active output locations are documented below.
+
+### Current active files
+
+| File | Path | Records | Date |
+|---|---|---|---|
+| Main merged JSON | `C:\Users\arika\OneDrive\Litigation\Pipeline\combined_repository.json` | 1,672 | Mar 2026 |
+| Main Excel export | `C:\Users\arika\OneDrive\Litigation\Pipeline\all_emails (2).xlsx` | 1,672 | Mar 15 2026 |
+| Straggler merged JSON | `C:\Users\arika\OneDrive\Litigation\Aid4Mail Exports\Aid4 ti json 2dtime\combined_repository-stragglers.json` | 1,615 | Mar 19 2026 |
+| Straggler Excel export | `C:\Users\arika\OneDrive\Litigation\Aid4Mail Exports\Aid4 ti json 2dtime\all_emails-stragglers.xlsx` | — | Mar 19 2026 |
+
+### Raw Aid4Mail JSON exports (input to merge_and_classify)
+
+| Source | Path |
+|---|---|
+| Gmail | `C:\Users\arika\OneDrive\Litigation\Aid4Mail Exports\Aid4 ti json 2dtime\Gmail body master.json` |
+| EML | `C:\Users\arika\OneDrive\Litigation\Aid4Mail Exports\Aid4 ti json 2dtime\EML body master.json` |
+| MSG | `C:\Users\arika\OneDrive\Litigation\Aid4Mail Exports\Aid4 ti json 2dtime\MSG body master.json` |
+
+### File naming convention
 
 | File | Produced by | Contents |
 |---|---|---|
 | `<name>.json` | merge_and_classify | Merged, deduped, classified email records |
 | `<name>_report.json` | merge_and_classify | Audit trail: counts, dupe groups, strip method breakdown |
 | `<name>.xlsx` | export_all_emails | All records × all fields, Excel-safe |
+
+Previous export versions (`all_emails.xlsx`, `all_emails (1).xlsx`) are kept — never overwritten.
+The `(N)` numbering is automatic from the file picker's overwrite protection.
+`all_emails (2).xlsx` is the current active version and feeds V11.xlsx via Power Query
+(`Email_Body_Input_File` parameter).
 
 ---
 
